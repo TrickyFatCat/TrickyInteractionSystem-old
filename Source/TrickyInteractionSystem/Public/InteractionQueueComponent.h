@@ -59,12 +59,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool RemoveActor(const AActor* Actor);
 
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	bool Interact();
+
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
+	bool IsQueueEmpty() const;
+
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool QueueHasData(const FInteractionData& InteractionData) const;
 
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool QueueHasActor(const AActor* Actor) const;
+
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
+	void GetFirstDataInQueue(UPARAM(ref) FInteractionData& Data);
+
+	
 private:
-	UPROPERTY(VisibleAnywhere, Category="Interaction")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	TArray<FInteractionData> InteractionQueue;
+
 };
