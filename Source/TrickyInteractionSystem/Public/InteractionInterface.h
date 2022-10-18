@@ -22,5 +22,5 @@ class TRICKYINTERACTIONSYSTEM_API IInteractionInterface
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interaction")
-	bool ProcessInteraction(AActor* TargetActor);
+	bool ProcessInteraction(AActor* OtherActor);
 };
