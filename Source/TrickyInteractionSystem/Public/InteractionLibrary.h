@@ -68,4 +68,7 @@ public:
 	{
 		FInteractionData::SetActor(Actor, InteractionData);
 	}
+
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	static bool GetPlayerViewpoint(const AActor* Actor, FVector& ViewLocation, FRotator& ViewRotation);
 };

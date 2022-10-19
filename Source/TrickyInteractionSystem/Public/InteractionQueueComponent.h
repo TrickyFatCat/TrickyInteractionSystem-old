@@ -4,44 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "InteractionLibrary.h"
+#include "Engine/EngineTypes.h"
 #include "InteractionQueueComponent.generated.h"
-
-USTRUCT(BlueprintType)
-struct FInteractionData
-{
-	GENERATED_USTRUCT_BODY()
-
-	/**
-	 * An actor which has an interaction interface.
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="InteractionData")
-	AActor* Actor = nullptr;
-
-	/**
-	 * Determines if the actor required to be in line of sight for interaction.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
-	bool bRequireLineOfSight = false;
-
-	/**
-	 * A message which can be used in HUD to show a type of interaction.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
-	FString InteractionMessage = "Interact";
-
-	/**
-	 * A sort weight for sorting in queue
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
-	int32 SortWeight = 0;
-
-	static bool Equal(const FInteractionData& Data_A, const FInteractionData& Data_B)
-	{
-		return Data_A.Actor == Data_B.Actor
-				&& Data_A.bRequireLineOfSight == Data_B.bRequireLineOfSight
-				&& Data_A.InteractionMessage == Data_B.InteractionMessage;
-	}
-};
 
 UCLASS(ClassGroup=(TrickyInteraction), meta=(BlueprintSpawnableComponent))
 class TRICKYINTERACTIONSYSTEM_API UInteractionQueueComponent : public UActorComponent
@@ -90,4 +55,30 @@ private:
 	TArray<FInteractionData> InteractionQueue;
 
 	void SortByWeight();
+
+public:
+	UFUNCTION(BlueprintGetter, Category="TrickyInteractionSystem")
+	bool GetUseLineOfSight() const;
+
+	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
+	void SetUseLineOfSight(const bool Value);
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetUseLineOfSight, BlueprintSetter=SetUseLineOfSight, Category="Interaction", meta=(AllowPrivateAccess))
+	bool bUseLineOfSight = false;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
+	TEnumAsByte<ETraceTypeQuery> TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Visibility);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
+	float SightDistance = 512.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
+	float SightRadius = 32.f;
+
+	UPROPERTY()
+	AActor* ActorInSight = nullptr;
+
+	AActor* GetActorInSight() const;
+
+	void SortByLineOfSight(const AActor* Actor);
 };

@@ -3,11 +3,14 @@
 
 #include "InteractionQueueComponent.h"
 
+#include "InteractionLibrary.h"
 #include "InteractionInterface.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UInteractionQueueComponent::UInteractionQueueComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetComponentTickInterval(0.05f);
 }
 
 
@@ -16,6 +19,12 @@ void UInteractionQueueComponent::TickComponent(float DeltaTime,
                                                FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (!IsQueueEmpty())
+	{
+		ActorInSight = GetActorInSight();
+		SortByLineOfSight(ActorInSight);
+	}
 }
 
 bool UInteractionQueueComponent::Add(const FInteractionData& InteractionData)
@@ -81,6 +90,11 @@ bool UInteractionQueueComponent::Interact()
 		return false;
 	}
 
+	if (InteractionData.bRequireLineOfSight && InteractionData.Actor != ActorInSight)
+	{
+		return false;
+	}
+
 	return IInteractionInterface::Execute_ProcessInteraction(InteractionData.Actor, GetOwner());
 }
 
@@ -122,10 +136,84 @@ void UInteractionQueueComponent::SortByWeight()
 		return;
 	}
 
-	auto Predicate = [&](const FInteractionData& Data_A, const FInteractionData& Data_B)
+	auto PredicateWeight = [&](const FInteractionData& Data_A, const FInteractionData& Data_B)
 	{
-		return Data_A.SortWeight >= Data_B.SortWeight;
+		return Data_A.SortWeight >= Data_B.SortWeight && Data_A.bRequireLineOfSight <= Data_B.bRequireLineOfSight;
 	};
 
-	InteractionQueue.Sort(Predicate);
+	InteractionQueue.Sort(PredicateWeight);
+}
+
+bool UInteractionQueueComponent::GetUseLineOfSight() const
+{
+	return bUseLineOfSight;
+}
+
+void UInteractionQueueComponent::SetUseLineOfSight(const bool Value)
+{
+	bUseLineOfSight = Value;
+	SetComponentTickEnabled(bUseLineOfSight);
+	SortByWeight();
+}
+
+AActor* UInteractionQueueComponent::GetActorInSight() const
+{
+	FVector ViewLocation{FVector::ZeroVector};
+	FRotator ViewRotation{FRotator::ZeroRotator};
+
+	if (!UInteractionLibrary::GetPlayerViewpoint(GetOwner(), ViewLocation, ViewRotation))
+	{
+		return nullptr;
+	}
+
+	const FVector TraceStart{ViewLocation};
+	const FVector TraceDirection{ViewRotation.Vector()};
+	const FVector TraceEnd{TraceStart + TraceDirection * SightDistance};
+
+	if (!GetWorld())
+	{
+		return nullptr;
+	}
+
+	FHitResult HitResult;
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(),
+	                                        TraceStart,
+	                                        TraceEnd,
+	                                        SightRadius,
+	                                        TraceChannel,
+	                                        false,
+	                                        {GetOwner()},
+	                                        EDrawDebugTrace::None,
+	                                        HitResult,
+	                                        true,
+	                                        FLinearColor::Red,
+	                                        FLinearColor::Green,
+	                                        .05f);
+
+	return HitResult.GetActor();
+}
+
+void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
+{
+	FInteractionData InteractionData;
+
+	if (!IsValid(Actor) || !QueueHasActor(Actor))
+	{
+		GetFirstDataInQueue(InteractionData);
+
+		if (InteractionData.bRequireLineOfSight)
+		{
+			SortByWeight();
+		}
+		return;
+	}
+
+	auto Predicate = [&](const FInteractionData& Data) { return Data.Actor == Actor; };
+	InteractionData = *InteractionQueue.FindByPredicate(Predicate);
+
+	if (InteractionData.bRequireLineOfSight)
+	{
+		const int32 Index = InteractionQueue.IndexOfByPredicate(Predicate);
+		InteractionQueue.Swap(Index, 0);
+	}
 }
