@@ -26,6 +26,7 @@ bool UInteractionQueueComponent::Add(const FInteractionData& InteractionData)
 	}
 
 	InteractionQueue.Add(InteractionData);
+	SortByWeight();
 	return true;
 }
 
@@ -37,7 +38,14 @@ bool UInteractionQueueComponent::Remove(const FInteractionData& InteractionData)
 	}
 
 	auto Predicate = [&](const FInteractionData& Data) { return FInteractionData::Equal(Data, InteractionData); };
-	return InteractionQueue.RemoveAll(Predicate) > 0;
+	const bool bItemsRemoved = InteractionQueue.RemoveAll(Predicate) > 0;
+
+	if (bItemsRemoved)
+	{
+		SortByWeight();
+	}
+
+	return bItemsRemoved;
 }
 
 bool UInteractionQueueComponent::RemoveActor(const AActor* Actor)
@@ -48,7 +56,14 @@ bool UInteractionQueueComponent::RemoveActor(const AActor* Actor)
 	}
 
 	auto Predicate = [&](const FInteractionData& Data) { return Data.Actor == Actor; };
-	return InteractionQueue.RemoveAll(Predicate) > 0;
+	const bool bItemsRemoved = InteractionQueue.RemoveAll(Predicate) > 0;
+
+	if (bItemsRemoved)
+	{
+		SortByWeight();
+	}
+
+	return bItemsRemoved;
 }
 
 bool UInteractionQueueComponent::Interact()
@@ -60,12 +75,12 @@ bool UInteractionQueueComponent::Interact()
 
 	FInteractionData InteractionData;
 	GetFirstDataInQueue(InteractionData);
-	
+
 	if (!IsValid(InteractionData.Actor))
 	{
 		return false;
 	}
-	
+
 	return IInteractionInterface::Execute_ProcessInteraction(InteractionData.Actor, GetOwner());
 }
 
@@ -98,4 +113,19 @@ void UInteractionQueueComponent::GetFirstDataInQueue(FInteractionData& Data)
 	}
 
 	Data = InteractionQueue[0];
+}
+
+void UInteractionQueueComponent::SortByWeight()
+{
+	if (InteractionQueue.Num() <= 1 || !bSortByWeight)
+	{
+		return;
+	}
+
+	auto Predicate = [&](const FInteractionData& Data_A, const FInteractionData& Data_B)
+	{
+		return Data_A.SortWeight >= Data_B.SortWeight;
+	};
+
+	InteractionQueue.Sort(Predicate);
 }

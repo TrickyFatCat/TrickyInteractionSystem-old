@@ -20,14 +20,20 @@ struct FInteractionData
 	/**
 	 * Determines if the actor required to be in line of sight for interaction.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="InteractionData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
 	bool bRequireLineOfSight = false;
 
 	/**
 	 * A message which can be used in HUD to show a type of interaction.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="InteractionData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
 	FString InteractionMessage = "Interact";
+
+	/**
+	 * A sort weight for sorting in queue
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
+	int32 SortWeight = 0;
 
 	static bool Equal(const FInteractionData& Data_A, const FInteractionData& Data_B)
 	{
@@ -44,6 +50,10 @@ class TRICKYINTERACTIONSYSTEM_API UInteractionQueueComponent : public UActorComp
 
 public:
 	UInteractionQueueComponent();
+
+protected:
+	UPROPERTY(BlueprintReadWrite, Category="Interaction")
+	bool bSortByWeight = true;
 
 public:
 	virtual void TickComponent(float DeltaTime,
@@ -79,4 +89,5 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	TArray<FInteractionData> InteractionQueue;
 
+	void SortByWeight();
 };
