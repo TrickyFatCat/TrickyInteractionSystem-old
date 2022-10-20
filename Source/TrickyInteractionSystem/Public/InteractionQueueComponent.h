@@ -16,9 +16,6 @@ class TRICKYINTERACTIONSYSTEM_API UInteractionQueueComponent : public UActorComp
 public:
 	UInteractionQueueComponent();
 
-protected:
-	UPROPERTY(BlueprintReadWrite, Category="Interaction")
-	bool bSortByWeight = true;
 
 public:
 	virtual void TickComponent(float DeltaTime,

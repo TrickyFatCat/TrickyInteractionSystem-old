@@ -131,7 +131,7 @@ void UInteractionQueueComponent::GetFirstDataInQueue(FInteractionData& Data)
 
 void UInteractionQueueComponent::SortByWeight()
 {
-	if (InteractionQueue.Num() <= 1 || !bSortByWeight)
+	if (InteractionQueue.Num() <= 1)
 	{
 		return;
 	}
