@@ -3,6 +3,7 @@
 
 #include "InteractionLibrary.h"
 
+#include "InteractionQueueComponent.h"
 #include "GameFramework/Character.h"
 
 bool UInteractionLibrary::GetPlayerViewpoint(const AActor* Actor, FVector& ViewLocation, FRotator& ViewRotation)
@@ -11,7 +12,7 @@ bool UInteractionLibrary::GetPlayerViewpoint(const AActor* Actor, FVector& ViewL
 
 	if (!Character)
 	{
-		return  false;
+		return false;
 	}
 
 	if (Character->IsPlayerControlled())
@@ -27,4 +28,27 @@ bool UInteractionLibrary::GetPlayerViewpoint(const AActor* Actor, FVector& ViewL
 	}
 
 	return true;
+}
+
+bool UInteractionLibrary::AddToQueue(const AActor* TargetActor,
+                                     AActor* InteractiveActor,
+                                     const bool bRequireLineOfSight,
+                                     const FString& InteractionMessage,
+                                     const int32 SortWeight)
+{
+	if (!IsValid(InteractiveActor) || !IsValid(TargetActor))
+	{
+		return false;
+	}
+
+	UInteractionQueueComponent* InteractionQueueComponent =
+			TargetActor->FindComponentByClass<UInteractionQueueComponent>();
+
+	if (!InteractionQueueComponent)
+	{
+		return false;
+	}
+
+	const FInteractionData InteractionData{InteractiveActor, bRequireLineOfSight, InteractionMessage, SortWeight};
+	return InteractionQueueComponent->Add(InteractionData);
 }
