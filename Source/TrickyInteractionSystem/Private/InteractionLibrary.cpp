@@ -30,6 +30,40 @@ bool UInteractionLibrary::GetPlayerViewpoint(const AActor* Actor, FVector& ViewL
 	return true;
 }
 
+bool UInteractionLibrary::AddDataToQueue(const AActor* Actor, const FInteractionData& InteractionData)
+{
+	if (!IsValid(Actor) || !IsValid(InteractionData.Actor))
+	{
+		return false;
+	}
+
+	UInteractionQueueComponent* InteractionQueueComponent = Actor->FindComponentByClass<UInteractionQueueComponent>();
+
+	if (!InteractionQueueComponent)
+	{
+		return false;
+	}
+
+	return InteractionQueueComponent->Add(InteractionData);
+}
+
+bool UInteractionLibrary::RemoveDataFromQueue(const AActor* Actor, const FInteractionData& InteractionData)
+{
+	if (!IsValid(Actor) || !IsValid(InteractionData.Actor))
+	{
+		return false;
+	}
+
+	UInteractionQueueComponent* InteractionQueueComponent = Actor->FindComponentByClass<UInteractionQueueComponent>();
+	
+	if (!InteractionQueueComponent)
+	{
+		return false;
+	}
+
+	return InteractionQueueComponent->Remove(InteractionData);
+}
+
 bool UInteractionLibrary::AddToQueue(const AActor* TargetActor,
                                      AActor* InteractiveActor,
                                      const bool bRequireLineOfSight,
@@ -41,14 +75,23 @@ bool UInteractionLibrary::AddToQueue(const AActor* TargetActor,
 		return false;
 	}
 
-	UInteractionQueueComponent* InteractionQueueComponent =
-			TargetActor->FindComponentByClass<UInteractionQueueComponent>();
+	const FInteractionData InteractionData{InteractiveActor, bRequireLineOfSight, InteractionMessage, SortWeight};
+	return AddDataToQueue(TargetActor, InteractionData);
+}
 
+bool UInteractionLibrary::RemoveFromQueue(const AActor* TargetActor, const AActor* InteractiveActor)
+{
+	if (!IsValid(TargetActor) || !IsValid(InteractiveActor))
+	{
+		return false;
+	}
+
+	UInteractionQueueComponent* InteractionQueueComponent = TargetActor->FindComponentByClass<UInteractionQueueComponent>();
+	
 	if (!InteractionQueueComponent)
 	{
 		return false;
 	}
 
-	const FInteractionData InteractionData{InteractiveActor, bRequireLineOfSight, InteractionMessage, SortWeight};
-	return InteractionQueueComponent->Add(InteractionData);
+	return InteractionQueueComponent->RemoveActor(InteractiveActor);
 }

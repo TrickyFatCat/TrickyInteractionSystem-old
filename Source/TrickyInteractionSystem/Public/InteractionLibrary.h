@@ -74,10 +74,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool GetPlayerViewpoint(const AActor* Actor, FVector& ViewLocation, FRotator& ViewRotation);
 
+	static bool AddDataToQueue(const AActor* Actor, const FInteractionData& InteractionData);
+
+	static bool RemoveDataFromQueue(const AActor* Actor, const FInteractionData& InteractionData);
+
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool AddToQueue(const AActor* TargetActor,
 	                       AActor* InteractiveActor,
 	                       const bool bRequireLineOfSight = false,
 	                       const FString& InteractionMessage = "Interact",
 	                       const int32 SortWeight = 0);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	static bool RemoveFromQueue(const AActor* TargetActor, const AActor* InteractiveActor);
 };
