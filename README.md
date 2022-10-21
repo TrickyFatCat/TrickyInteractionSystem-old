@@ -60,4 +60,9 @@ A collection of triggers which can add to and remove form the interaction queue 
 
 ## Quick Setup
 
-
+1. Add InteractionQueueComponent to your character;
+2. Create an interactive actor:
+   * Add InteractionInterface to the chosen actor and write the logic in the `ProcessInteraction` function;
+   * Add any of InteractionTrigger;
+3. Create "Interaction" input action;
+4. Call the `Interact` function of InteractionQueueComponent;
