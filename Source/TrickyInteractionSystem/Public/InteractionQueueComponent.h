@@ -22,7 +22,6 @@ class TRICKYINTERACTIONSYSTEM_API UInteractionQueueComponent : public UActorComp
 public:
 	UInteractionQueueComponent();
 
-
 public:
 	virtual void TickComponent(float DeltaTime,
 	                           ELevelTick TickType,
@@ -95,7 +94,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	float SightRadius = 32.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	AActor* ActorInSight = nullptr;
 
 	AActor* GetActorInSight() const;
@@ -108,6 +107,9 @@ private:
 	FTimerHandle InteractionTimer;
 
 	bool StartInteractionTimer(const FInteractionData& InteractionData);
+
+	UFUNCTION()
+	void InteractWrapper(const FInteractionData& InteractionData) const;
 
 	bool IsInteractionTimerActive() const;
 };

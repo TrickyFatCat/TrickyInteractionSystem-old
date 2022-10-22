@@ -14,7 +14,6 @@ UInteractionQueueComponent::UInteractionQueueComponent()
 	SetComponentTickInterval(0.05f);
 }
 
-
 void UInteractionQueueComponent::TickComponent(float DeltaTime,
                                                ELevelTick TickType,
                                                FActorComponentTickFunction* ThisTickFunction)
@@ -91,6 +90,11 @@ bool UInteractionQueueComponent::StartInteraction()
 		return false;
 	}
 
+	if (! InteractionData.Actor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+	{
+		return false;
+	}
+
 	if (InteractionData.bRequireLineOfSight && InteractionData.Actor != ActorInSight)
 	{
 		return false;
@@ -124,6 +128,9 @@ bool UInteractionQueueComponent::StopInteraction()
 		return false;
 	}
 
+	FInteractionData InteractionData;
+	GetFirstDataInQueue(InteractionData);
+	IInteractionInterface::Execute_StopInteraction(InteractionData.Actor, GetOwner());
 	TimerManager.ClearTimer(InteractionTimer);
 	OnInteractionStopped.Broadcast();
 	return true;
@@ -187,7 +194,9 @@ bool UInteractionQueueComponent::Interact(const FInteractionData& InteractionDat
 		return false;
 	}
 
-	if (IInteractionInterface::Execute_ProcessInteraction(InteractionData.Actor, GetOwner()))
+	const bool bResult = IInteractionInterface::Execute_Interact(InteractionData.Actor, GetOwner());
+	
+	if (bResult)
 	{
 		OnInteractionFinished.Broadcast();
 		return true;
@@ -270,13 +279,13 @@ void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
 
 	if (InteractionData.bRequireLineOfSight)
 	{
-		const int32 Index = InteractionQueue.IndexOfByPredicate(Predicate);
-		InteractionQueue.Swap(Index, 0);
-
 		if (IsInteractionTimerActive() && ActorInSight != InteractionData.Actor)
 		{
 			StopInteraction();
 		}
+
+		const int32 Index = InteractionQueue.IndexOfByPredicate(Predicate);
+		InteractionQueue.Swap(Index, 0);
 	}
 }
 
@@ -294,11 +303,16 @@ bool UInteractionQueueComponent::StartInteractionTimer(const FInteractionData& I
 		return false;
 	}
 
-	FTimerDelegate InteractionDelegate;
-	InteractionDelegate.BindUFunction(this, "Interact", InteractionData);
-	TimerManager.SetTimer(InteractionTimer, InteractionDelegate, InteractionData.InteractionTime, false);
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindUFunction(this, "InteractWrapper", InteractionData);
+	TimerManager.SetTimer(InteractionTimer, TimerDelegate, InteractionData.InteractionTime, false);
 	OnInteractionStarted.Broadcast();
 	return true;
+}
+
+void UInteractionQueueComponent::InteractWrapper(const FInteractionData& InteractionData) const
+{
+	Interact(InteractionData);
 }
 
 bool UInteractionQueueComponent::IsInteractionTimerActive() const
