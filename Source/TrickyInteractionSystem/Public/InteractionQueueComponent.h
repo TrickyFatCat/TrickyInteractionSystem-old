@@ -8,6 +8,12 @@
 #include "Engine/EngineTypes.h"
 #include "InteractionQueueComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractionStartedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractionFinishedSignature);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractionStoppedSignature);
+
 UCLASS(ClassGroup=(TrickyInteraction), meta=(BlueprintSpawnableComponent))
 class TRICKYINTERACTIONSYSTEM_API UInteractionQueueComponent : public UActorComponent
 {
@@ -22,6 +28,15 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnInteractionStartedSignature OnInteractionStarted;
+
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnInteractionFinishedSignature OnInteractionFinished;
+
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnInteractionStoppedSignature OnInteractionStopped;
+
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool Add(const FInteractionData& InteractionData);
 
@@ -32,7 +47,10 @@ public:
 	bool RemoveActor(const AActor* Actor);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
-	bool Interact();
+	bool StartInteraction();
+
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	bool StopInteraction();
 
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool IsQueueEmpty() const;
@@ -53,6 +71,11 @@ private:
 
 	void SortByWeight();
 
+	UFUNCTION()
+	bool Interact(const FInteractionData& InteractionData) const;
+
+// Line of sight logic
+	
 public:
 	UFUNCTION(BlueprintGetter, Category="TrickyInteractionSystem")
 	bool GetUseLineOfSight() const;
@@ -78,4 +101,13 @@ private:
 	AActor* GetActorInSight() const;
 
 	void SortByLineOfSight(const AActor* Actor);
+
+// Overtime interaction
+private:
+	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
+	FTimerHandle InteractionTimer;
+
+	bool StartInteractionTimer(const FInteractionData& InteractionData);
+
+	bool IsInteractionTimerActive() const;
 };

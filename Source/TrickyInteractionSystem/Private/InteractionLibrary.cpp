@@ -55,7 +55,7 @@ bool UInteractionLibrary::RemoveDataFromQueue(const AActor* Actor, const FIntera
 	}
 
 	UInteractionQueueComponent* InteractionQueueComponent = Actor->FindComponentByClass<UInteractionQueueComponent>();
-	
+
 	if (!InteractionQueueComponent)
 	{
 		return false;
@@ -68,14 +68,26 @@ bool UInteractionLibrary::AddToQueue(const AActor* TargetActor,
                                      AActor* InteractiveActor,
                                      const bool bRequireLineOfSight,
                                      const FString& InteractionMessage,
-                                     const int32 SortWeight)
+                                     const int32 SortWeight,
+                                     float InteractionTime)
 {
 	if (!IsValid(InteractiveActor) || !IsValid(TargetActor))
 	{
 		return false;
 	}
 
-	const FInteractionData InteractionData{InteractiveActor, bRequireLineOfSight, InteractionMessage, SortWeight};
+	if (InteractionTime < 0.f)
+	{
+		InteractionTime = 0.f;
+	}
+
+	const FInteractionData InteractionData{
+			InteractiveActor,
+			bRequireLineOfSight,
+			InteractionMessage,
+			SortWeight,
+			InteractionTime
+	};
 	return AddDataToQueue(TargetActor, InteractionData);
 }
 
@@ -86,8 +98,9 @@ bool UInteractionLibrary::RemoveFromQueue(const AActor* TargetActor, const AActo
 		return false;
 	}
 
-	UInteractionQueueComponent* InteractionQueueComponent = TargetActor->FindComponentByClass<UInteractionQueueComponent>();
-	
+	UInteractionQueueComponent* InteractionQueueComponent = TargetActor->FindComponentByClass<
+		UInteractionQueueComponent>();
+
 	if (!InteractionQueueComponent)
 	{
 		return false;
