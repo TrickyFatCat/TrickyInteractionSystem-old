@@ -6,13 +6,13 @@
 #include "InteractionLibrary.h"
 #include "InteractionInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "TimerManager.h"
 
 UInteractionQueueComponent::UInteractionQueueComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	SetComponentTickInterval(0.05f);
 }
-
 
 void UInteractionQueueComponent::TickComponent(float DeltaTime,
                                                ELevelTick TickType,
@@ -75,7 +75,7 @@ bool UInteractionQueueComponent::RemoveActor(const AActor* Actor)
 	return bItemsRemoved;
 }
 
-bool UInteractionQueueComponent::Interact()
+bool UInteractionQueueComponent::StartInteraction()
 {
 	if (IsQueueEmpty())
 	{
@@ -90,12 +90,50 @@ bool UInteractionQueueComponent::Interact()
 		return false;
 	}
 
+	if (! InteractionData.Actor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+	{
+		return false;
+	}
+
 	if (InteractionData.bRequireLineOfSight && InteractionData.Actor != ActorInSight)
 	{
 		return false;
 	}
 
-	return IInteractionInterface::Execute_ProcessInteraction(InteractionData.Actor, GetOwner());
+	if (InteractionData.InteractionTime > 0.f)
+	{
+		return StartInteractionTimer(InteractionData);
+	}
+
+	if (Interact(InteractionData))
+	{
+		OnInteractionStarted.Broadcast();
+		return true;
+	}
+
+	return false;
+}
+
+bool UInteractionQueueComponent::StopInteraction()
+{
+	if (!GetWorld())
+	{
+		return false;
+	}
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	if (!TimerManager.IsTimerActive(InteractionTimer))
+	{
+		return false;
+	}
+
+	FInteractionData InteractionData;
+	GetFirstDataInQueue(InteractionData);
+	IInteractionInterface::Execute_StopInteraction(InteractionData.Actor, GetOwner());
+	TimerManager.ClearTimer(InteractionTimer);
+	OnInteractionStopped.Broadcast();
+	return true;
 }
 
 bool UInteractionQueueComponent::IsQueueEmpty() const
@@ -142,6 +180,29 @@ void UInteractionQueueComponent::SortByWeight()
 	};
 
 	InteractionQueue.Sort(PredicateWeight);
+}
+
+bool UInteractionQueueComponent::Interact(const FInteractionData& InteractionData) const
+{
+	if (!IsValid(InteractionData.Actor))
+	{
+		return false;
+	}
+
+	if (InteractionData.bRequireLineOfSight && InteractionData.Actor != ActorInSight)
+	{
+		return false;
+	}
+
+	const bool bResult = IInteractionInterface::Execute_Interact(InteractionData.Actor, GetOwner());
+	
+	if (bResult)
+	{
+		OnInteractionFinished.Broadcast();
+		return true;
+	}
+
+	return false;
 }
 
 bool UInteractionQueueComponent::GetUseLineOfSight() const
@@ -205,6 +266,11 @@ void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
 		{
 			SortByWeight();
 		}
+
+		if (IsInteractionTimerActive())
+		{
+			StopInteraction();
+		}
 		return;
 	}
 
@@ -213,7 +279,50 @@ void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
 
 	if (InteractionData.bRequireLineOfSight)
 	{
+		if (IsInteractionTimerActive() && ActorInSight != InteractionData.Actor)
+		{
+			StopInteraction();
+		}
+
 		const int32 Index = InteractionQueue.IndexOfByPredicate(Predicate);
 		InteractionQueue.Swap(Index, 0);
 	}
+}
+
+bool UInteractionQueueComponent::StartInteractionTimer(const FInteractionData& InteractionData)
+{
+	if (!GetWorld())
+	{
+		return false;
+	}
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	if (TimerManager.IsTimerActive(InteractionTimer))
+	{
+		return false;
+	}
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindUFunction(this, "InteractWrapper", InteractionData);
+	TimerManager.SetTimer(InteractionTimer, TimerDelegate, InteractionData.InteractionTime, false);
+	OnInteractionStarted.Broadcast();
+	return true;
+}
+
+void UInteractionQueueComponent::InteractWrapper(const FInteractionData& InteractionData) const
+{
+	Interact(InteractionData);
+}
+
+bool UInteractionQueueComponent::IsInteractionTimerActive() const
+{
+	if (!GetWorld())
+	{
+		return false;
+	}
+
+	const FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(InteractionTimer);
 }

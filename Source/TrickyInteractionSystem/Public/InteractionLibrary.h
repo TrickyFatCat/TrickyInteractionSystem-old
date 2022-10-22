@@ -37,11 +37,16 @@ struct FInteractionData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
 	int32 SortWeight = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData", meta=(ClampMin="0"))
+	float InteractionTime = 0.f;
+
 	static bool Equal(const FInteractionData& Data_A, const FInteractionData& Data_B)
 	{
 		return Data_A.Actor == Data_B.Actor
 				&& Data_A.bRequireLineOfSight == Data_B.bRequireLineOfSight
-				&& Data_A.InteractionMessage == Data_B.InteractionMessage;
+				&& Data_A.InteractionMessage == Data_B.InteractionMessage
+				&& Data_A.SortWeight == Data_B.SortWeight
+				&& Data_A.InteractionTime == Data_B.InteractionTime;
 	}
 
 	static void SetActor(AActor* Actor, FInteractionData& Data)
@@ -83,7 +88,8 @@ public:
 	                       AActor* InteractiveActor,
 	                       const bool bRequireLineOfSight = false,
 	                       const FString& InteractionMessage = "Interact",
-	                       const int32 SortWeight = 0);
+	                       const int32 SortWeight = 0,
+	                       float InteractionTime = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool RemoveFromQueue(const AActor* TargetActor, const AActor* InteractiveActor);
