@@ -42,9 +42,13 @@ This component handles creating a queue for interaction which it sorts by weight
 
 ### InteractionInterface
 
-The interface which used to implement the logic which will be called by InteractionQueueComponent.
+The interface which used to implement the interaction functionality in the chosen actor.
 
 #### Functions
+
+1. `StartInteraction` - this function called when the interaction queue component starts the interaction;
+2. `Interact` - this function called to activate the interaction effect returns `true` if success, else `false`;
+3. `StopInteraction` - this function called when the `StopInteraction` called from the interaction queue component;
 
 ### Interaction Library
 
@@ -62,7 +66,7 @@ A collection of triggers which can add to and remove form the interaction queue 
 
 1. Add InteractionQueueComponent to your character;
 2. Create an interactive actor:
-   * Add InteractionInterface to the chosen actor and write the logic in the `ProcessInteraction` function;
+   * Add InteractionInterface to the chosen actor and write the logic in the `Interact` function;
    * Add any of InteractionTrigger;
 3. Create "Interaction" input action;
-4. Call the `Interact` function of InteractionQueueComponent;
+4. Call the `StartInteraction` function of InteractionQueueComponent;
