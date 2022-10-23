@@ -34,7 +34,7 @@ public:
 	bool Interact(AActor* OtherActor);
 
 	/**
-	 * This function called when the `StopInteraction` called from the interaction queue component.
+	 * This function called when the StopInteraction called from the interaction queue component.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interaction")
 	void StopInteraction(AActor* OtherActor);

@@ -56,7 +56,7 @@ struct FInteractionData
 };
 
 /**
- * 
+ * A library which contains some useful functions for custom implementation of the system using Blueprints.
  */
 UCLASS()
 class TRICKYINTERACTIONSYSTEM_API UInteractionLibrary : public UBlueprintFunctionLibrary
@@ -64,25 +64,37 @@ class TRICKYINTERACTIONSYSTEM_API UInteractionLibrary : public UBlueprintFunctio
 	GENERATED_BODY()
 
 public:
+	/**
+	 * Compare interaction data and returns if they're equal or not.
+	 */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	static bool Equal(const FInteractionData& Data_A, const FInteractionData& Data_B)
 	{
 		return FInteractionData::Equal(Data_A, Data_B);
 	}
-
+	
+	/**
+	 * Sets the Actor variable in a given interaction data.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static void SetActor(AActor* Actor, UPARAM(ref) FInteractionData& InteractionData)
 	{
 		FInteractionData::SetActor(Actor, InteractionData);
 	}
-
+	
+	/**
+	 * Returns player's viewport location and rotation.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool GetPlayerViewpoint(const AActor* Actor, FVector& ViewLocation, FRotator& ViewRotation);
 
 	static bool AddDataToQueue(const AActor* Actor, const FInteractionData& InteractionData);
 
 	static bool RemoveDataFromQueue(const AActor* Actor, const FInteractionData& InteractionData);
-
+	
+	/**
+	 * Adds custom interaction data to the interaction queue component of the given actor.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool AddToQueue(const AActor* TargetActor,
 	                       AActor* InteractiveActor,
@@ -90,10 +102,16 @@ public:
 	                       const FString& InteractionMessage = "Interact",
 	                       const int32 SortWeight = 0,
 	                       float InteractionTime = 0.f);
-
+	
+	/**
+	 * Removes interaction data to the interaction queue component of the given actor if it was found.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool RemoveFromQueue(const AActor* TargetActor, const AActor* InteractiveActor);
-
+	
+	/**
+	 * Checks if the given actor has InteractionInterface.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool HasInteractionInterface(const AActor* Actor);
 };

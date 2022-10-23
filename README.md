@@ -56,6 +56,13 @@ A library which contains some useful functions for custom implementation of the 
 
 #### Functions
 
+1. `Equal` - compare interaction data and returns if they're equal or not;
+2. `SetActor` - sets the `Actor` variable in the given interaction data;
+3. `GetPlayerViewpoint` - returns player's viewport location and rotation;
+4. `AddToQueue` - adds custom interaction data to the interaction queue component of the given actor;
+5. `RemoveFromQueue` - removes interaction data from the interaction queue component of the given actor if it was found;
+6. `HasInteractionInterface` - checks if the given actor has `InteractionInterface`;
+
 ### InteractionTriggers
 
 A collection of triggers which can add to and remove form the interaction queue the owner actor.
