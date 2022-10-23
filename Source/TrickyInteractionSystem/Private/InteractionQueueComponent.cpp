@@ -127,6 +127,11 @@ bool UInteractionQueueComponent::StopInteraction()
 	FInteractionData InteractionData;
 	GetFirstDataInQueue(InteractionData);
 
+	if (!IsValid(InteractionData.Actor))
+	{
+		return false;
+	}
+
 	if (!UInteractionLibrary::HasInteractionInterface(InteractionData.Actor))
 	{
 		LogWarning(FString::Printf(TEXT("Actor %s doesn't have InteractionInterface implemented."),
