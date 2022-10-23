@@ -110,7 +110,7 @@ bool UInteractionQueueComponent::StartInteraction()
 	if (Interact(InteractionData))
 	{
 		OnInteractionStarted.Broadcast(InteractionData.Actor);
-		IInteractionInterface::Execute_Interact(InteractionData.Actor, GetOwner());
+		IInteractionInterface::Execute_StartInteraction(InteractionData.Actor, GetOwner());
 		return true;
 	}
 
