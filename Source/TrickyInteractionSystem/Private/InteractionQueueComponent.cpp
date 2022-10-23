@@ -92,6 +92,8 @@ bool UInteractionQueueComponent::StartInteraction()
 
 	if (!UInteractionLibrary::HasInteractionInterface(InteractionData.Actor))
 	{
+		LogWarning(FString::Printf(TEXT("Actor %s doesn't have InteractionInterface implemented."),
+		                           *InteractionData.Actor->GetClass()->GetName()));
 		return false;
 	}
 
@@ -127,16 +129,18 @@ bool UInteractionQueueComponent::StopInteraction()
 
 	if (!UInteractionLibrary::HasInteractionInterface(InteractionData.Actor))
 	{
+		LogWarning(FString::Printf(TEXT("Actor %s doesn't have InteractionInterface implemented."),
+		                           *InteractionData.Actor->GetClass()->GetName()));
 		return false;
 	}
 
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-	
+
 	if (TimerManager.IsTimerActive(InteractionTimer))
 	{
 		TimerManager.ClearTimer(InteractionTimer);
 	}
-	
+
 	OnInteractionStopped.Broadcast(InteractionData.Actor);
 	IInteractionInterface::Execute_StopInteraction(InteractionData.Actor, GetOwner());
 	return true;
@@ -209,6 +213,17 @@ bool UInteractionQueueComponent::Interact(const FInteractionData& InteractionDat
 	}
 
 	return false;
+}
+
+void UInteractionQueueComponent::LogWarning(const FString& Message) const
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	const FString ErrorMessage{FString::Printf(TEXT("%s | Actor: %s"), *Message, *GetOwner()->GetName())};
+	UE_LOG(LogInteractionQueueComponent, Warning, TEXT("%s"), *ErrorMessage);
 }
 
 bool UInteractionQueueComponent::GetUseLineOfSight() const

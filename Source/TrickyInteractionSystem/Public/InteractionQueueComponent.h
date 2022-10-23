@@ -8,6 +8,8 @@
 #include "Engine/EngineTypes.h"
 #include "InteractionQueueComponent.generated.h"
 
+DECLARE_LOG_CATEGORY_CLASS(LogInteractionQueueComponent, Display, Display)
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStartedSignature, AActor*, TargetActor);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractSignature, AActor*, TargetActor);
@@ -111,6 +113,8 @@ private:
 
 	UFUNCTION()
 	bool Interact(const FInteractionData& InteractionData) const;
+
+	void LogWarning(const FString& Message) const;
 
 // Line of sight logic
 	
