@@ -10,10 +10,13 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStartedSignature, AActor*, TargetActor);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionFinishedSignature, AActor*, TargetActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractSignature, AActor*, TargetActor);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStoppedSignature, AActor*, TargetActor);
 
+/**
+ *  This component handles creating a queue for interaction which it sorts by weight and line of sight.
+ */
 UCLASS(ClassGroup=(TrickyInteraction), meta=(BlueprintSpawnableComponent))
 class TRICKYINTERACTIONSYSTEM_API UInteractionQueueComponent : public UActorComponent
 {
@@ -27,12 +30,21 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
+	/**
+	 * Called when the interaction process started.
+	 */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractionStartedSignature OnInteractionStarted;
 
+	/**
+	 * Called when the interaction effect successfully activated.
+	 */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
-	FOnInteractionFinishedSignature OnInteractionFinished;
+	FOnInteractSignature OnInteract;
 
+	/**
+	 * Called when the interaction process stopped.
+	 */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractionStoppedSignature OnInteractionStopped;
 

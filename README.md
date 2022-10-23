@@ -42,6 +42,9 @@ This component handles creating a queue for interaction which it sorts by weight
 
 #### Delegates
 
+1. `OnInteractionStarted` - called when the interaction process started;
+2. `OnInteract` - called when the interaction effect successfully activated;
+3. `OnInteractionStopped` - called when the interaction process stopped;
 
 ### Interaction data
 

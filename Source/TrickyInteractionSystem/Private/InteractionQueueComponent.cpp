@@ -205,7 +205,7 @@ bool UInteractionQueueComponent::Interact(const FInteractionData& InteractionDat
 	
 	if (bResult)
 	{
-		OnInteractionFinished.Broadcast(InteractionData.Actor);
+		OnInteract.Broadcast(InteractionData.Actor);
 		return true;
 	}
 
