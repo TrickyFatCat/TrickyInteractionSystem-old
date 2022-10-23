@@ -38,6 +38,16 @@ This component handles creating a queue for interaction which it sorts by weight
 
 #### Parameters
 
+1. `InteractionQueue` - current interaction queue;
+   * It's read only and exposed for debug purposes;
+2. `UseLineOfSight` - toggles the line of sight checks;
+   * Keep it false if there's no interactive actors require line of sight checks in your game;
+3. `TraceChannel` - the trace channel used for line of sight checks;
+   * Currently read only;
+4. `SightDistance` - the line of sight max distance;
+5. `SightRadius` - the line of sight radius;
+6. `ActorInSight` - the actor caught by line of sight;
+
 #### Functions
 
 #### Delegates

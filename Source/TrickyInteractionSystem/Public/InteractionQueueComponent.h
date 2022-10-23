@@ -94,19 +94,36 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetUseLineOfSight(const bool Value);
 private:
+	/**
+	 * Toggles the line of sight checks.
+	 *
+	 * Keep it false if there's no interactive actors require line of sight to interact with.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetUseLineOfSight, BlueprintSetter=SetUseLineOfSight, Category="Interaction", meta=(AllowPrivateAccess))
 	bool bUseLineOfSight = false;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
+
+	/**
+	 * Line of sight trace channel.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	TEnumAsByte<ETraceTypeQuery> TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Visibility);
 
+	/**
+	 * The line of sight max distance.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	float SightDistance = 512.f;
 
+	/**
+	 * The line of sight radius. 
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	float SightRadius = 32.f;
 
-	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
+	/**
+	 * The actor caught by line of sight.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	AActor* ActorInSight = nullptr;
 
 	AActor* GetActorInSight() const;
