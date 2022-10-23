@@ -48,32 +48,59 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractionStoppedSignature OnInteractionStopped;
 
+	/**
+	 * Adds interaction data into the interaction queue.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool Add(const FInteractionData& InteractionData);
 
+	/**
+	 * Removes interaction data into the interaction queue.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool Remove(const FInteractionData& InteractionData);
 
+	/**
+	 * Removes interaction data of the given actor from the interaction queue.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool RemoveActor(const AActor* Actor);
 
+	/**
+	 * Starts interaction with the first actor in the interaction queue.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool StartInteraction();
 
+	/**
+	 * Stops interaction.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool StopInteraction();
 
+	/**
+	 * Checks if the interaction queue is empty.
+	 */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool IsQueueEmpty() const;
 
+	/**
+	 * Checks if the interaction queue has the given interaction data.
+	 */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool QueueHasData(const FInteractionData& InteractionData) const;
 
+	/**
+	 * Checks if the interaction queue has interaction data with the given actor.
+	 */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool QueueHasActor(const AActor* Actor) const;
 
+	/**
+	 * Returns the first interaction data in queue.
+	 */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
-	void GetFirstDataInQueue(UPARAM(ref) FInteractionData& Data);
+	void GetFirstDataInQueue(FInteractionData& Data);
 
 	
 private:

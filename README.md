@@ -50,6 +50,16 @@ This component handles creating a queue for interaction which it sorts by weight
 
 #### Functions
 
+1. `Add` - adds interaction data into the interaction queue;
+2. `Remove` - removes interaction data from the interaction queue;
+3. `RemoveActor` - removes interaction data of the given actor from the interaction queue;
+4. `StartInteraction` - starts interaction with the first actor in the interaction queue;
+5. `StopInteraction` - stops interaction;
+6. `IsQueueEmpty` - checks if the interaction queue is empty;
+7. `QueueHasData` - checks if the interaction queue has the given interaction data;
+8. `QueueHasActor` - checks if the interaction queue has interaction data with the given actor;
+9. `GetFirstDataInQueue` - returns the first interaction data in queue;
+
 #### Delegates
 
 1. `OnInteractionStarted` - called when the interaction process started;
