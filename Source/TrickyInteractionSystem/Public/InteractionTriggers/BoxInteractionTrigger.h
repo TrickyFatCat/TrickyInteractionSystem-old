@@ -8,7 +8,7 @@
 #include "BoxInteractionTrigger.generated.h"
 
 /**
- * 
+ * A trigger which adds and removes owner from the interaction queue.
  */
 UCLASS(ClassGroup=(TrickyInteraction), meta=(BlueprintSpawnableComponent))
 class TRICKYINTERACTIONSYSTEM_API UBoxInteractionTrigger : public UBoxComponent
@@ -25,10 +25,16 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	/**
+	 * Toggles if the trigger should behave as a normal trigger.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess))
 	bool bIsNormalTrigger = false;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintSetter=SetInteractionSettings, Category="Interaction", meta=(AllowPrivateAccess))
+
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintSetter=SetInteractionSettings,
+		Category="Interaction",
+		meta=(AllowPrivateAccess))
 	FInteractionData InteractionSettings;
 
 	UFUNCTION()

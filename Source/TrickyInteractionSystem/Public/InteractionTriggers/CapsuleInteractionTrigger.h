@@ -8,7 +8,7 @@
 #include "CapsuleInteractionTrigger.generated.h"
 
 /**
- * 
+ * A trigger which adds and removes owner from the interaction queue.
  */
 UCLASS(ClassGroup=(TrickyInteraction), meta=(BlueprintSpawnableComponent))
 class TRICKYINTERACTIONSYSTEM_API UCapsuleInteractionTrigger : public UCapsuleComponent
@@ -24,6 +24,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	/**
+	 * Toggles if the trigger should behave as a normal trigger.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess))
 	bool bIsNormalTrigger = false;
 

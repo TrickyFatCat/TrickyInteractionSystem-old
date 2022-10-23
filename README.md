@@ -67,7 +67,15 @@ A library which contains some useful functions for custom implementation of the 
 
 A collection of triggers which can add to and remove form the interaction queue the owner actor.
 
+The plugin has:
+1. BoxInteractionTrigger;
+2. CapsuleInteractionTrigger;
+3. SphereInteractionTrigger;
+
 #### Parameters
+
+1. `IsNormalTrigger` - toggles if the trigger should behave as a normal trigger;
+2. `InteractionSettings` - interaction data which will be used by the interaction queue component;
 
 ## Quick Setup
 
