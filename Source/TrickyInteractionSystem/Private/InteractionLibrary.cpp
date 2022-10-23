@@ -6,6 +6,7 @@
 #include "InteractionInterface.h"
 #include "InteractionQueueComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/PlayerController.h"
 
 bool UInteractionLibrary::GetPlayerViewpoint(const AActor* Actor, FVector& ViewLocation, FRotator& ViewRotation)
 {
