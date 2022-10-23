@@ -22,6 +22,9 @@ class TRICKYINTERACTIONSYSTEM_API IInteractionInterface
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interaction")
+	void StartInteraction(AActor* OtherActor);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interaction")
 	bool Interact(AActor* OtherActor);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interaction")

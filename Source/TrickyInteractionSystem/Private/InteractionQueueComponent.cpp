@@ -90,7 +90,7 @@ bool UInteractionQueueComponent::StartInteraction()
 		return false;
 	}
 
-	if (! InteractionData.Actor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+	if (!UInteractionLibrary::HasInteractionInterface(InteractionData.Actor))
 	{
 		return false;
 	}
@@ -107,7 +107,8 @@ bool UInteractionQueueComponent::StartInteraction()
 
 	if (Interact(InteractionData))
 	{
-		OnInteractionStarted.Broadcast();
+		OnInteractionStarted.Broadcast(InteractionData.Actor);
+		IInteractionInterface::Execute_Interact(InteractionData.Actor, GetOwner());
 		return true;
 	}
 
@@ -130,9 +131,15 @@ bool UInteractionQueueComponent::StopInteraction()
 
 	FInteractionData InteractionData;
 	GetFirstDataInQueue(InteractionData);
-	IInteractionInterface::Execute_StopInteraction(InteractionData.Actor, GetOwner());
+
+	if (!UInteractionLibrary::HasInteractionInterface(InteractionData.Actor))
+	{
+		return false;
+	}
+	
 	TimerManager.ClearTimer(InteractionTimer);
-	OnInteractionStopped.Broadcast();
+	OnInteractionStopped.Broadcast(InteractionData.Actor);
+	IInteractionInterface::Execute_StopInteraction(InteractionData.Actor, GetOwner());
 	return true;
 }
 
@@ -198,7 +205,7 @@ bool UInteractionQueueComponent::Interact(const FInteractionData& InteractionDat
 	
 	if (bResult)
 	{
-		OnInteractionFinished.Broadcast();
+		OnInteractionFinished.Broadcast(InteractionData.Actor);
 		return true;
 	}
 
@@ -306,7 +313,10 @@ bool UInteractionQueueComponent::StartInteractionTimer(const FInteractionData& I
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction(this, "InteractWrapper", InteractionData);
 	TimerManager.SetTimer(InteractionTimer, TimerDelegate, InteractionData.InteractionTime, false);
-	OnInteractionStarted.Broadcast();
+	
+	OnInteractionStarted.Broadcast(InteractionData.Actor);
+	IInteractionInterface::Execute_StartInteraction(InteractionData.Actor, GetOwner());
+	
 	return true;
 }
 

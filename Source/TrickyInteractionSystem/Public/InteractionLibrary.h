@@ -93,4 +93,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool RemoveFromQueue(const AActor* TargetActor, const AActor* InteractiveActor);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	static bool HasInteractionInterface(const AActor* Actor);
 };

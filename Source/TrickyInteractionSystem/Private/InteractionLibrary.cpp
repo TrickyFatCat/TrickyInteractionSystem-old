@@ -3,6 +3,7 @@
 
 #include "InteractionLibrary.h"
 
+#include "InteractionInterface.h"
 #include "InteractionQueueComponent.h"
 #include "GameFramework/Character.h"
 
@@ -107,4 +108,9 @@ bool UInteractionLibrary::RemoveFromQueue(const AActor* TargetActor, const AActo
 	}
 
 	return InteractionQueueComponent->RemoveActor(InteractiveActor);
+}
+
+bool UInteractionLibrary::HasInteractionInterface(const AActor* Actor)
+{
+	return Actor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass());
 }

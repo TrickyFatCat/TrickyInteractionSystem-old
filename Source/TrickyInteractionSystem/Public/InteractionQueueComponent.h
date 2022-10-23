@@ -8,11 +8,11 @@
 #include "Engine/EngineTypes.h"
 #include "InteractionQueueComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractionStartedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStartedSignature, AActor*, TargetActor);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractionFinishedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionFinishedSignature, AActor*, TargetActor);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractionStoppedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStoppedSignature, AActor*, TargetActor);
 
 UCLASS(ClassGroup=(TrickyInteraction), meta=(BlueprintSpawnableComponent))
 class TRICKYINTERACTIONSYSTEM_API UInteractionQueueComponent : public UActorComponent
