@@ -14,29 +14,32 @@ struct FInteractionData
 	GENERATED_USTRUCT_BODY()
 
 	/**
-	 * An actor which has an interaction interface.
+	 * An interactive actor which InteractionInterface implemented.
 	 */
 	UPROPERTY(VisibleAnywhere, Category="InteractionData")
 	AActor* Actor = nullptr;
 
 	/**
-	 * Determines if the actor required to be in line of sight for interaction.
+	 * Toggles if the actor require being in the line of sight to be interacted. 
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
 	bool bRequireLineOfSight = false;
 
 	/**
-	 * A message which can be used in HUD to show a type of interaction.
+	 * A message which can be used in HUD.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
 	FString InteractionMessage = "Interact";
 
 	/**
-	 * A sort weight for sorting in queue
+	 * A sort weight for sorting the interaction queue.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
 	int32 SortWeight = 0;
 
+	/**
+	 * How much time required to activate interaction effect.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData", meta=(ClampMin="0"))
 	float InteractionTime = 0.f;
 

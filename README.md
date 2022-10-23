@@ -40,6 +40,23 @@ This component handles creating a queue for interaction which it sorts by weight
 
 #### Functions
 
+#### Delegates
+
+
+### Interaction data
+
+The struct which contains parameters for interaction behaviour adjustments.
+
+### Parameters
+
+1. `Actor` - an interactive actor with `InteractionInterface` implemented.
+   * Use `SetActor` function from InteractionLibrary to set this parameter in blueprints;
+   * It's better to do it in ConstructionScript or OnBeginPlay;
+2. `bRequireLineOfSight` - toggles if the actor require being in the line of sight to be interacted; 
+3. `InteractionMessage` - a message which can be used in HUD;
+4. `SortWeight` - a sort weight for sorting the interaction queue;
+5. `InteractionTime` - how much time required to activate interaction effect (call `Interact` function);
+
 ### InteractionInterface
 
 The interface which used to implement the interaction functionality in the chosen actor.
