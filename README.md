@@ -10,7 +10,7 @@ The plugin can be used in both C++ and Blueprint projects.
 
 **At the moment, the package is compatible only with Unreal Engine 4.**
 
-1. Download [**package file**](https://github.com/TrickyFatCat/TrickyInteractionSystem/releases/tag/v1.0);
+1. Download [**package file**](https://github.com/TrickyFatCat/TrickyInteractionSystem/releases/tag/v1.0.2);
 2. Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_4.27\Engine\Plugins`;
 3. Restart the project;
 
