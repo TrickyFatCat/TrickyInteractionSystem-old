@@ -17,9 +17,13 @@ class TRICKYINTERACTIONSYSTEM_API UCapsuleInteractionTrigger : public UCapsuleCo
 
 public:
 	UCapsuleInteractionTrigger();
+	
 	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetInteractionSettings(const FInteractionData& Value);
 
+	UFUNCTION(BlueprintGetter, Category="TrickyInteractionSystem")
+	FInteractionData GetInteractionSettings() const;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -31,6 +35,7 @@ private:
 	bool bIsNormalTrigger = false;
 
 	UPROPERTY(EditDefaultsOnly,
+		BlueprintGetter=GetInteractionSettings,
 		BlueprintSetter=SetInteractionSettings,
 		Category="Interaction",
 		meta=(AllowPrivateAccess))

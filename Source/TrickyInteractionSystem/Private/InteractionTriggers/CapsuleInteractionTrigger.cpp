@@ -20,6 +20,11 @@ void UCapsuleInteractionTrigger::SetInteractionSettings(const FInteractionData& 
 	InteractionSettings.Actor = GetOwner();
 }
 
+FInteractionData UCapsuleInteractionTrigger::GetInteractionSettings() const
+{
+	return InteractionSettings;
+}
+
 void UCapsuleInteractionTrigger::BeginPlay()
 {
 	Super::BeginPlay();

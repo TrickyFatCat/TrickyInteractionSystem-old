@@ -22,6 +22,11 @@ void USphereInteractionTrigger::SetInteractionSettings(const FInteractionData& V
 	InteractionSettings.Actor = GetOwner();
 }
 
+FInteractionData USphereInteractionTrigger::GetInteractionSettings() const
+{
+	return InteractionSettings;
+}
+
 void USphereInteractionTrigger::BeginPlay()
 {
 	Super::BeginPlay();

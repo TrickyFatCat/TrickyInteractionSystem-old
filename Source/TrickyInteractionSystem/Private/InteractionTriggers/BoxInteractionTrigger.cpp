@@ -20,6 +20,11 @@ void UBoxInteractionTrigger::SetInteractionSettings(const FInteractionData& Valu
 	InteractionSettings.Actor = GetOwner();
 }
 
+FInteractionData UBoxInteractionTrigger::GetInteractionSettings() const
+{
+	return InteractionSettings;
+}
+
 void UBoxInteractionTrigger::BeginPlay()
 {
 	Super::BeginPlay();
