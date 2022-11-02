@@ -107,14 +107,10 @@ bool UInteractionQueueComponent::StartInteraction()
 		return StartInteractionTimer(InteractionData);
 	}
 
-	if (Interact(InteractionData))
-	{
-		OnInteractionStarted.Broadcast(InteractionData.Actor);
-		IInteractionInterface::Execute_StartInteraction(InteractionData.Actor, GetOwner());
-		return true;
-	}
+	OnInteractionStarted.Broadcast(InteractionData.Actor);
+	IInteractionInterface::Execute_StartInteraction(InteractionData.Actor, GetOwner());
 
-	return false;
+	return InteractionData.bCallInteractFunction ? true : Interact(InteractionData);
 }
 
 bool UInteractionQueueComponent::StopInteraction()

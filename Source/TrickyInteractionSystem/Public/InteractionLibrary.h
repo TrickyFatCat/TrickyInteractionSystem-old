@@ -43,6 +43,13 @@ struct FInteractionData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData", meta=(ClampMin="0"))
 	float InteractionTime = 0.f;
 
+	/**
+	 * If true, the system will call the Interact function from InteractionInterface.
+	 * Make it false if you want to make interaction depending on holding button.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData")
+	bool bCallInteractFunction = true;
+
 	static bool Equal(const FInteractionData& Data_A, const FInteractionData& Data_B)
 	{
 		return Data_A.Actor == Data_B.Actor

@@ -79,6 +79,7 @@ The struct which contains parameters for interaction behaviour adjustments.
 3. `InteractionMessage` - a message which can be used in HUD;
 4. `SortWeight` - a sort weight for sorting the interaction queue;
 5. `InteractionTime` - how much time required to activate interaction effect (call `Interact` function);
+6. `CallInteractFunction` - if true, the InteractionQueue component will call the `Interact` function from the interface;
 
 ### InteractionInterface
 
