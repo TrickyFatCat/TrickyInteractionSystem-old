@@ -337,6 +337,11 @@ bool UInteractionQueueComponent::StartInteractionTimer(const FInteractionData& I
 
 void UInteractionQueueComponent::InteractWrapper(const FInteractionData& InteractionData) const
 {
+	if (!InteractionData.bCallInteractFunction)
+	{
+		return;
+	}
+	
 	Interact(InteractionData);
 }
 
