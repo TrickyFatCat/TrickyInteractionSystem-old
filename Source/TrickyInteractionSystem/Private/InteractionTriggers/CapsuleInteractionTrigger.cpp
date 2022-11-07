@@ -20,6 +20,11 @@ void UCapsuleInteractionTrigger::SetInteractionSettings(const FInteractionData& 
 	InteractionSettings.Actor = GetOwner();
 }
 
+void UCapsuleInteractionTrigger::SetInteractionMessage(const FString& Message)
+{
+	InteractionSettings.InteractionMessage = Message;
+}
+
 FInteractionData UCapsuleInteractionTrigger::GetInteractionSettings() const
 {
 	return InteractionSettings;

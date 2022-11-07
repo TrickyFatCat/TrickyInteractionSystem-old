@@ -22,6 +22,11 @@ void USphereInteractionTrigger::SetInteractionSettings(const FInteractionData& V
 	InteractionSettings.Actor = GetOwner();
 }
 
+void USphereInteractionTrigger::SetInteractionMessage(const FString& Message)
+{
+	InteractionSettings.InteractionMessage = Message;
+}
+
 FInteractionData USphereInteractionTrigger::GetInteractionSettings() const
 {
 	return InteractionSettings;

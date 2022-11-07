@@ -20,6 +20,11 @@ void UBoxInteractionTrigger::SetInteractionSettings(const FInteractionData& Valu
 	InteractionSettings.Actor = GetOwner();
 }
 
+void UBoxInteractionTrigger::SetInteractionMessage(const FString& Message)
+{
+	InteractionSettings.InteractionMessage = Message;
+}
+
 FInteractionData UBoxInteractionTrigger::GetInteractionSettings() const
 {
 	return InteractionSettings;

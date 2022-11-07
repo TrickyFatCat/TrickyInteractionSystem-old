@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetInteractionSettings(const FInteractionData& Value);
 
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	void SetInteractionMessage(const FString& Message);
+	
 	UFUNCTION(BlueprintGetter, Category="TrickyInteractionSystem")
 	FInteractionData GetInteractionSettings() const;
 	
