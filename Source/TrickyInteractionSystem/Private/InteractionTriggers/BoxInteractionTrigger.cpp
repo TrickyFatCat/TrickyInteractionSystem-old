@@ -17,7 +17,6 @@ UBoxInteractionTrigger::UBoxInteractionTrigger()
 void UBoxInteractionTrigger::SetInteractionSettings(const FInteractionData& Value)
 {
 	InteractionSettings = Value;
-	InteractionSettings.Actor = GetOwner();
 }
 
 void UBoxInteractionTrigger::SetInteractionMessage(const FString& Message)
@@ -34,7 +33,6 @@ void UBoxInteractionTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InteractionSettings.Actor = GetOwner();
 	OnComponentBeginOverlap.AddDynamic(this, &UBoxInteractionTrigger::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBoxInteractionTrigger::OnEndOverlap);
 }
@@ -48,7 +46,7 @@ void UBoxInteractionTrigger::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
 {
 	if (IsValid(OtherActor) && !bIsNormalTrigger)
 	{
-		UInteractionLibrary::AddDataToQueue(OtherActor, InteractionSettings);
+		UInteractionLibrary::AddToInteractionQueue(OtherActor, GetOwner(), InteractionSettings);
 	}
 }
 
@@ -59,6 +57,6 @@ void UBoxInteractionTrigger::OnEndOverlap(UPrimitiveComponent* OverlappedCompone
 {
 	if (IsValid(OtherActor) && !bIsNormalTrigger)
 	{
-		UInteractionLibrary::RemoveDataFromQueue(OtherActor, InteractionSettings);
+		UInteractionLibrary::RemoveFromInteractionQueue(OtherActor, GetOwner());
 	}
 }

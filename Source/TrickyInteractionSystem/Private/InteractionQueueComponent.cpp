@@ -27,44 +27,26 @@ void UInteractionQueueComponent::TickComponent(float DeltaTime,
 	}
 }
 
-bool UInteractionQueueComponent::Add(const FInteractionData& InteractionData)
+bool UInteractionQueueComponent::Add(AActor* Actor, const FInteractionData& InteractionData)
 {
-	if (!IsValid(InteractionData.Actor) && QueueHasData(InteractionData))
+	if (!IsValid(Actor) && QueueHasActor(Actor))
 	{
 		return false;
 	}
 
-	InteractionQueue.Add(InteractionData);
+	InteractionQueue.Add(FQueueData{Actor, InteractionData});
 	SortByWeight();
 	return true;
 }
 
-bool UInteractionQueueComponent::Remove(const FInteractionData& InteractionData)
+bool UInteractionQueueComponent::Remove(const AActor* Actor)
 {
-	if (!QueueHasData(InteractionData))
+	if (!QueueHasActor(Actor))
 	{
 		return false;
 	}
 
-	auto Predicate = [&](const FInteractionData& Data) { return FInteractionData::Equal(Data, InteractionData); };
-	const bool bItemsRemoved = InteractionQueue.RemoveAll(Predicate) > 0;
-
-	if (bItemsRemoved)
-	{
-		SortByWeight();
-	}
-
-	return bItemsRemoved;
-}
-
-bool UInteractionQueueComponent::RemoveActor(const AActor* Actor)
-{
-	if (!IsValid(Actor) || !QueueHasActor(Actor))
-	{
-		return false;
-	}
-
-	auto Predicate = [&](const FInteractionData& Data) { return Data.Actor == Actor; };
+	auto Predicate = [&](const FQueueData& Data) { return Data.Actor == Actor; };
 	const bool bItemsRemoved = InteractionQueue.RemoveAll(Predicate) > 0;
 
 	if (bItemsRemoved)
@@ -83,34 +65,35 @@ bool UInteractionQueueComponent::StartInteraction()
 	}
 
 	FInteractionData InteractionData;
-	GetFirstDataInQueue(InteractionData);
+	GetFirstData(InteractionData);
+	AActor* Actor = GetFirstActor();
 
-	if (!IsValid(InteractionData.Actor))
+	if (!IsValid(Actor))
 	{
 		return false;
 	}
 
-	if (!UInteractionLibrary::HasInteractionInterface(InteractionData.Actor))
+	if (!UInteractionLibrary::HasInteractionInterface(Actor))
 	{
 		LogWarning(FString::Printf(TEXT("Actor %s doesn't have InteractionInterface implemented."),
-		                           *InteractionData.Actor->GetClass()->GetName()));
+		                           *Actor->GetClass()->GetName()));
 		return false;
 	}
 
-	if (InteractionData.bRequireLineOfSight && InteractionData.Actor != ActorInSight)
+	if (InteractionData.bRequireLineOfSight && Actor != ActorInSight)
 	{
 		return false;
 	}
 
 	if (InteractionData.InteractionTime > 0.f)
 	{
-		return StartInteractionTimer(InteractionData);
+		return StartInteractionTimer(InteractionQueue[0]);
 	}
 
-	OnInteractionStarted.Broadcast(InteractionData.Actor);
-	IInteractionInterface::Execute_StartInteraction(InteractionData.Actor, GetOwner());
+	OnInteractionStarted.Broadcast(Actor);
+	IInteractionInterface::Execute_StartInteraction(Actor, GetOwner());
 
-	return InteractionData.bCallInteractFunction ? Interact(InteractionData) : true;
+	return Interact(InteractionQueue[0]);
 }
 
 bool UInteractionQueueComponent::StopInteraction()
@@ -121,17 +104,18 @@ bool UInteractionQueueComponent::StopInteraction()
 	}
 
 	FInteractionData InteractionData;
-	GetFirstDataInQueue(InteractionData);
+	GetFirstData(InteractionData);
+	AActor* Actor = GetFirstActor();
 
-	if (!IsValid(InteractionData.Actor))
+	if (!IsValid(Actor))
 	{
 		return false;
 	}
 
-	if (!UInteractionLibrary::HasInteractionInterface(InteractionData.Actor))
+	if (!UInteractionLibrary::HasInteractionInterface(Actor))
 	{
 		LogWarning(FString::Printf(TEXT("Actor %s doesn't have InteractionInterface implemented."),
-		                           *InteractionData.Actor->GetClass()->GetName()));
+		                           *Actor->GetClass()->GetName()));
 		return false;
 	}
 
@@ -142,8 +126,8 @@ bool UInteractionQueueComponent::StopInteraction()
 		TimerManager.ClearTimer(InteractionTimer);
 	}
 
-	OnInteractionStopped.Broadcast(InteractionData.Actor);
-	IInteractionInterface::Execute_StopInteraction(InteractionData.Actor, GetOwner());
+	OnInteractionStopped.Broadcast(Actor);
+	IInteractionInterface::Execute_StopInteraction(Actor, GetOwner());
 	return true;
 }
 
@@ -152,30 +136,30 @@ bool UInteractionQueueComponent::IsQueueEmpty() const
 	return InteractionQueue.Num() == 0;
 }
 
-bool UInteractionQueueComponent::QueueHasData(const FInteractionData& InteractionData) const
-{
-	auto Predicate = [&](const FInteractionData& Data)
-	{
-		return FInteractionData::Equal(Data, InteractionData);
-	};
-
-	return InteractionQueue.ContainsByPredicate(Predicate);
-}
-
 bool UInteractionQueueComponent::QueueHasActor(const AActor* Actor) const
 {
-	auto Predicate = [&](const FInteractionData& Data) { return Data.Actor == Actor; };
+	auto Predicate = [&](const FQueueData& Data) { return Data.Actor == Actor; };
 	return InteractionQueue.ContainsByPredicate(Predicate);
 }
 
-void UInteractionQueueComponent::GetFirstDataInQueue(FInteractionData& Data)
+void UInteractionQueueComponent::GetFirstData(FInteractionData& Data)
 {
 	if (IsQueueEmpty())
 	{
 		return;
 	}
 
-	Data = InteractionQueue[0];
+	Data = InteractionQueue[0].InteractionData;
+}
+
+AActor* UInteractionQueueComponent::GetFirstActor()
+{
+	if (IsQueueEmpty())
+	{
+		return nullptr;
+	}
+
+	return InteractionQueue[0].Actor;
 }
 
 void UInteractionQueueComponent::SortByWeight()
@@ -185,31 +169,40 @@ void UInteractionQueueComponent::SortByWeight()
 		return;
 	}
 
-	auto PredicateWeight = [&](const FInteractionData& Data_A, const FInteractionData& Data_B)
+	auto PredicateWeight = [&](const FQueueData& Data_A, const FQueueData& Data_B)
 	{
-		return Data_A.SortWeight >= Data_B.SortWeight && Data_A.bRequireLineOfSight <= Data_B.bRequireLineOfSight;
+		return Data_A.InteractionData.SortWeight >= Data_B.InteractionData.SortWeight &&
+			   Data_A.InteractionData.bRequireLineOfSight <= Data_B.InteractionData.bRequireLineOfSight;
 	};
 
 	InteractionQueue.Sort(PredicateWeight);
 }
 
-bool UInteractionQueueComponent::Interact(const FInteractionData& InteractionData) const
+void UInteractionQueueComponent::GetData(const AActor* Actor, FInteractionData& Data)
 {
-	if (!IsValid(InteractionData.Actor))
+	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
+	Data = InteractionQueue.FindByPredicate(Predicate)->InteractionData;
+}
+
+bool UInteractionQueueComponent::Interact(const FQueueData& QueueData) const
+{
+	if (!IsValid(QueueData.Actor))
 	{
 		return false;
 	}
 
-	if (InteractionData.bRequireLineOfSight && InteractionData.Actor != ActorInSight)
+	const FInteractionData InteractionData = QueueData.InteractionData;
+
+	if (InteractionData.bRequireLineOfSight && QueueData.Actor != ActorInSight)
 	{
 		return false;
 	}
 
-	const bool bResult = IInteractionInterface::Execute_Interact(InteractionData.Actor, GetOwner());
+	const bool bResult = IInteractionInterface::Execute_Interact(QueueData.Actor, GetOwner());
 
 	if (bResult)
 	{
-		OnInteract.Broadcast(InteractionData.Actor);
+		OnInteract.Broadcast(QueueData.Actor);
 		return true;
 	}
 
@@ -282,7 +275,7 @@ void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
 
 	if (!IsValid(Actor) || !QueueHasActor(Actor))
 	{
-		GetFirstDataInQueue(InteractionData);
+		GetFirstData(InteractionData);
 
 		if (InteractionData.bRequireLineOfSight)
 		{
@@ -296,12 +289,13 @@ void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
 		return;
 	}
 
-	auto Predicate = [&](const FInteractionData& Data) { return Data.Actor == Actor; };
-	InteractionData = *InteractionQueue.FindByPredicate(Predicate);
+	auto Predicate = [&](const FQueueData& Data) { return Data.Actor == Actor; };
+	const FQueueData QueueData = *InteractionQueue.FindByPredicate(Predicate);
+	InteractionData = QueueData.InteractionData;
 
 	if (InteractionData.bRequireLineOfSight)
 	{
-		if (IsInteractionTimerActive() && ActorInSight != InteractionData.Actor)
+		if (IsInteractionTimerActive() && ActorInSight != QueueData.Actor)
 		{
 			StopInteraction();
 		}
@@ -311,7 +305,7 @@ void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
 	}
 }
 
-bool UInteractionQueueComponent::StartInteractionTimer(const FInteractionData& InteractionData)
+bool UInteractionQueueComponent::StartInteractionTimer(const FQueueData& QueueData)
 {
 	if (!GetWorld())
 	{
@@ -325,24 +319,21 @@ bool UInteractionQueueComponent::StartInteractionTimer(const FInteractionData& I
 		return false;
 	}
 
+	const FInteractionData InteractionData = QueueData.InteractionData;
+
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction(this, "InteractWrapper", InteractionData);
 	TimerManager.SetTimer(InteractionTimer, TimerDelegate, InteractionData.InteractionTime, false);
 
-	OnInteractionStarted.Broadcast(InteractionData.Actor);
-	IInteractionInterface::Execute_StartInteraction(InteractionData.Actor, GetOwner());
+	OnInteractionStarted.Broadcast(QueueData.Actor);
+	IInteractionInterface::Execute_StartInteraction(QueueData.Actor, GetOwner());
 
 	return true;
 }
 
-void UInteractionQueueComponent::InteractWrapper(const FInteractionData& InteractionData) const
+void UInteractionQueueComponent::InteractWrapper(const FQueueData& QueueData) const
 {
-	if (!InteractionData.bCallInteractFunction)
-	{
-		return;
-	}
-	
-	Interact(InteractionData);
+	Interact(QueueData);
 }
 
 bool UInteractionQueueComponent::IsInteractionTimerActive() const

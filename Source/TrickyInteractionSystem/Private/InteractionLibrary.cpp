@@ -32,9 +32,11 @@ bool UInteractionLibrary::GetPlayerViewpoint(const AActor* Actor, FVector& ViewL
 	return true;
 }
 
-bool UInteractionLibrary::AddDataToQueue(const AActor* Actor, const FInteractionData& InteractionData)
+bool UInteractionLibrary::AddToInteractionQueue(const AActor* Actor,
+                                                AActor* InteractiveActor,
+                                                const FInteractionData& InteractionData)
 {
-	if (!IsValid(Actor) || !IsValid(InteractionData.Actor))
+	if (!IsValid(Actor) || !IsValid(InteractiveActor))
 	{
 		return false;
 	}
@@ -46,12 +48,13 @@ bool UInteractionLibrary::AddDataToQueue(const AActor* Actor, const FInteraction
 		return false;
 	}
 
-	return InteractionQueueComponent->Add(InteractionData);
+	return InteractionQueueComponent->Add(InteractiveActor, InteractionData);
 }
 
-bool UInteractionLibrary::RemoveDataFromQueue(const AActor* Actor, const FInteractionData& InteractionData)
+
+bool UInteractionLibrary::RemoveFromInteractionQueue(const AActor* Actor, const AActor* InteractiveActor)
 {
-	if (!IsValid(Actor) || !IsValid(InteractionData.Actor))
+	if (!IsValid(Actor) || !IsValid(InteractiveActor))
 	{
 		return false;
 	}
@@ -63,52 +66,7 @@ bool UInteractionLibrary::RemoveDataFromQueue(const AActor* Actor, const FIntera
 		return false;
 	}
 
-	return InteractionQueueComponent->Remove(InteractionData);
-}
-
-bool UInteractionLibrary::AddToQueue(const AActor* TargetActor,
-                                     AActor* InteractiveActor,
-                                     const bool bRequireLineOfSight,
-                                     const FString& InteractionMessage,
-                                     const int32 SortWeight,
-                                     float InteractionTime)
-{
-	if (!IsValid(InteractiveActor) || !IsValid(TargetActor))
-	{
-		return false;
-	}
-
-	if (InteractionTime < 0.f)
-	{
-		InteractionTime = 0.f;
-	}
-
-	const FInteractionData InteractionData{
-			InteractiveActor,
-			bRequireLineOfSight,
-			InteractionMessage,
-			SortWeight,
-			InteractionTime
-	};
-	return AddDataToQueue(TargetActor, InteractionData);
-}
-
-bool UInteractionLibrary::RemoveFromQueue(const AActor* TargetActor, const AActor* InteractiveActor)
-{
-	if (!IsValid(TargetActor) || !IsValid(InteractiveActor))
-	{
-		return false;
-	}
-
-	UInteractionQueueComponent* InteractionQueueComponent = TargetActor->FindComponentByClass<
-		UInteractionQueueComponent>();
-
-	if (!InteractionQueueComponent)
-	{
-		return false;
-	}
-
-	return InteractionQueueComponent->RemoveActor(InteractiveActor);
+	return InteractionQueueComponent->Remove(InteractiveActor);
 }
 
 bool UInteractionLibrary::HasInteractionInterface(const AActor* Actor)

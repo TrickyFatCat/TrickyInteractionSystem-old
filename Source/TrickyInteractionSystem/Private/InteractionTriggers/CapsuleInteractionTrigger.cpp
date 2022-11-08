@@ -17,7 +17,6 @@ UCapsuleInteractionTrigger::UCapsuleInteractionTrigger()
 void UCapsuleInteractionTrigger::SetInteractionSettings(const FInteractionData& Value)
 {
 	InteractionSettings = Value;
-	InteractionSettings.Actor = GetOwner();
 }
 
 void UCapsuleInteractionTrigger::SetInteractionMessage(const FString& Message)
@@ -34,7 +33,6 @@ void UCapsuleInteractionTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InteractionSettings.Actor = GetOwner();
 	OnComponentBeginOverlap.AddDynamic(this, &UCapsuleInteractionTrigger::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UCapsuleInteractionTrigger::OnEndOverlap);
 }
@@ -48,7 +46,7 @@ void UCapsuleInteractionTrigger::OnBeginOverlap(UPrimitiveComponent* OverlappedC
 {
 	if (IsValid(OtherActor) && !bIsNormalTrigger)
 	{
-		UInteractionLibrary::AddDataToQueue(OtherActor, InteractionSettings);
+		UInteractionLibrary::AddToInteractionQueue(OtherActor, GetOwner(), InteractionSettings);
 	}
 }
 
@@ -59,6 +57,6 @@ void UCapsuleInteractionTrigger::OnEndOverlap(UPrimitiveComponent* OverlappedCom
 {
 	if (IsValid(OtherActor) && !bIsNormalTrigger)
 	{
-		UInteractionLibrary::RemoveDataFromQueue(OtherActor, InteractionSettings);
+		UInteractionLibrary::RemoveFromInteractionQueue(OtherActor, GetOwner());
 	}
 }

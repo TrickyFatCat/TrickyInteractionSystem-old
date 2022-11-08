@@ -19,7 +19,6 @@ USphereInteractionTrigger::USphereInteractionTrigger()
 void USphereInteractionTrigger::SetInteractionSettings(const FInteractionData& Value)
 {
 	InteractionSettings = Value;
-	InteractionSettings.Actor = GetOwner();
 }
 
 void USphereInteractionTrigger::SetInteractionMessage(const FString& Message)
@@ -36,7 +35,6 @@ void USphereInteractionTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InteractionSettings.Actor = GetOwner();
 	OnComponentBeginOverlap.AddDynamic(this, &USphereInteractionTrigger::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &USphereInteractionTrigger::OnEndOverlap);
 }
@@ -50,7 +48,7 @@ void USphereInteractionTrigger::OnBeginOverlap(UPrimitiveComponent* OverlappedCo
 {
 	if (IsValid(OtherActor) && !bIsNormalTrigger)
 	{
-		UInteractionLibrary::AddDataToQueue(OtherActor, InteractionSettings);
+		UInteractionLibrary::AddToInteractionQueue(OtherActor, GetOwner(),InteractionSettings);
 	}
 }
 
@@ -61,6 +59,6 @@ void USphereInteractionTrigger::OnEndOverlap(UPrimitiveComponent* OverlappedComp
 {
 	if (IsValid(OtherActor) && !bIsNormalTrigger)
 	{
-		UInteractionLibrary::RemoveDataFromQueue(OtherActor, InteractionSettings);
+		UInteractionLibrary::RemoveFromInteractionQueue(OtherActor, GetOwner());
 	}
 }

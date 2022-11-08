@@ -8,6 +8,18 @@
 #include "Engine/EngineTypes.h"
 #include "InteractionQueueComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FQueueData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	AActor* Actor = nullptr;
+
+	UPROPERTY()
+	FInteractionData InteractionData;
+};
+
 DECLARE_LOG_CATEGORY_CLASS(LogInteractionQueueComponent, Display, Display)
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStartedSignature, AActor*, TargetActor);
@@ -54,19 +66,13 @@ public:
 	 * Adds interaction data into the interaction queue.
 	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
-	bool Add(const FInteractionData& InteractionData);
+	bool Add(AActor* Actor, const FInteractionData& InteractionData);
 
 	/**
 	 * Removes interaction data into the interaction queue.
 	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
-	bool Remove(const FInteractionData& InteractionData);
-
-	/**
-	 * Removes interaction data of the given actor from the interaction queue.
-	 */
-	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
-	bool RemoveActor(const AActor* Actor);
+	bool Remove(const AActor* Actor);
 
 	/**
 	 * Starts interaction with the first actor in the interaction queue.
@@ -87,12 +93,6 @@ public:
 	bool IsQueueEmpty() const;
 
 	/**
-	 * Checks if the interaction queue has the given interaction data.
-	 */
-	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
-	bool QueueHasData(const FInteractionData& InteractionData) const;
-
-	/**
 	 * Checks if the interaction queue has interaction data with the given actor.
 	 */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
@@ -102,17 +102,21 @@ public:
 	 * Returns the first interaction data in queue.
 	 */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
-	void GetFirstDataInQueue(FInteractionData& Data);
+	void GetFirstData(FInteractionData& Data);
+
+	AActor* GetFirstActor();
 
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
-	TArray<FInteractionData> InteractionQueue;
+	TArray<FQueueData> InteractionQueue;
 
 	void SortByWeight();
 
+	void GetData(const AActor* Actor, FInteractionData& Data);
+
 	UFUNCTION()
-	bool Interact(const FInteractionData& InteractionData) const;
+	bool Interact(const FQueueData& QueueData) const;
 
 	void LogWarning(const FString& Message) const;
 
@@ -166,10 +170,10 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	FTimerHandle InteractionTimer;
 
-	bool StartInteractionTimer(const FInteractionData& InteractionData);
+	bool StartInteractionTimer(const FQueueData& QueueData);
 
 	UFUNCTION()
-	void InteractWrapper(const FInteractionData& InteractionData) const;
+	void InteractWrapper(const FQueueData& QueueData) const;
 
 	bool IsInteractionTimerActive() const;
 };
