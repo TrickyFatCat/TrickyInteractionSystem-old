@@ -104,7 +104,11 @@ public:
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	void GetFirstData(FInteractionData& Data);
 
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	AActor* GetFirstActor();
+	
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
+	bool GetInteractionData(const AActor* Actor, FInteractionData& Data);
 
 	
 private:
@@ -112,8 +116,6 @@ private:
 	TArray<FQueueData> InteractionQueue;
 
 	void SortByWeight();
-
-	void GetData(const AActor* Actor, FInteractionData& Data);
 
 	UFUNCTION()
 	bool Interact(const FQueueData& QueueData) const;

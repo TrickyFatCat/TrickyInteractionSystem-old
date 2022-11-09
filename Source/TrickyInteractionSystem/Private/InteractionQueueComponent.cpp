@@ -138,6 +138,11 @@ bool UInteractionQueueComponent::IsQueueEmpty() const
 
 bool UInteractionQueueComponent::QueueHasActor(const AActor* Actor) const
 {
+	if (!IsValid(Actor))
+	{
+		return false;
+	}
+	
 	auto Predicate = [&](const FQueueData& Data) { return Data.Actor == Actor; };
 	return InteractionQueue.ContainsByPredicate(Predicate);
 }
@@ -162,6 +167,18 @@ AActor* UInteractionQueueComponent::GetFirstActor()
 	return InteractionQueue[0].Actor;
 }
 
+bool UInteractionQueueComponent::GetInteractionData(const AActor* Actor, FInteractionData& Data)
+{
+	if (!QueueHasActor(Actor))
+	{
+		return false;
+	}
+
+	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
+	Data = InteractionQueue.FindByPredicate(Predicate)->InteractionData;
+	return true;
+}
+
 void UInteractionQueueComponent::SortByWeight()
 {
 	if (InteractionQueue.Num() <= 1)
@@ -176,12 +193,6 @@ void UInteractionQueueComponent::SortByWeight()
 	};
 
 	InteractionQueue.Sort(PredicateWeight);
-}
-
-void UInteractionQueueComponent::GetData(const AActor* Actor, FInteractionData& Data)
-{
-	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
-	Data = InteractionQueue.FindByPredicate(Predicate)->InteractionData;
 }
 
 bool UInteractionQueueComponent::Interact(const FQueueData& QueueData) const

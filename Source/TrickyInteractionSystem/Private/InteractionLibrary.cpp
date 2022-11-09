@@ -54,7 +54,7 @@ bool UInteractionLibrary::AddToInteractionQueue(const AActor* Actor,
 
 bool UInteractionLibrary::RemoveFromInteractionQueue(const AActor* Actor, const AActor* InteractiveActor)
 {
-	if (!IsValid(Actor) || !IsValid(InteractiveActor))
+	if (!IsActorInInteractionQueue(Actor, InteractiveActor))
 	{
 		return false;
 	}
@@ -71,5 +71,47 @@ bool UInteractionLibrary::RemoveFromInteractionQueue(const AActor* Actor, const 
 
 bool UInteractionLibrary::HasInteractionInterface(const AActor* Actor)
 {
+	if (!IsValid(Actor))
+	{
+		return false;
+	}
+	
 	return Actor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass());
+}
+
+bool UInteractionLibrary::IsActorInInteractionQueue(const AActor* Actor, const AActor* InteractiveActor)
+{
+	if (!IsValid(Actor))
+	{
+		return false;
+	}
+
+	const UInteractionQueueComponent* InteractionQueueComponent = Actor->FindComponentByClass<
+		UInteractionQueueComponent>();
+
+	if (!InteractionQueueComponent)
+	{
+		return false;
+	}
+
+	return InteractionQueueComponent->QueueHasActor(InteractiveActor);
+}
+
+bool UInteractionLibrary::GetInteractionData(const AActor* Actor,
+                                             const AActor* InteractiveActor,
+                                             FInteractionData& InteractionData)
+{
+	if (!IsActorInInteractionQueue(Actor, InteractiveActor))
+	{
+		return false;
+	}
+
+	UInteractionQueueComponent* InteractionQueueComponent = Actor->FindComponentByClass<UInteractionQueueComponent>();
+
+	if (!InteractionQueueComponent)
+	{
+		return false;
+	}
+
+	return InteractionQueueComponent->GetInteractionData(InteractiveActor, InteractionData);
 }
