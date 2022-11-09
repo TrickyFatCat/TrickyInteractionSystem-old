@@ -75,7 +75,7 @@ bool UInteractionLibrary::HasInteractionInterface(const AActor* Actor)
 	{
 		return false;
 	}
-	
+
 	return Actor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass());
 }
 
@@ -114,4 +114,24 @@ bool UInteractionLibrary::GetInteractionData(const AActor* Actor,
 	}
 
 	return InteractionQueueComponent->GetInteractionData(InteractiveActor, InteractionData);
+}
+
+bool UInteractionLibrary::UpdateInteractionMessage(const AActor* Actor,
+                                                   const AActor* InteractiveActor,
+                                                   const FString& NewMessage)
+{
+	if (!IsActorInInteractionQueue(Actor, InteractiveActor))
+	{
+		return false;
+	}
+
+	UInteractionQueueComponent* InteractionQueueComponent = Actor->FindComponentByClass<UInteractionQueueComponent>();
+
+	if (!InteractionQueueComponent)
+	{
+		return false;
+	}
+
+	InteractionQueueComponent->UpdateInteractionMessage(InteractiveActor, NewMessage);
+	return true;
 }

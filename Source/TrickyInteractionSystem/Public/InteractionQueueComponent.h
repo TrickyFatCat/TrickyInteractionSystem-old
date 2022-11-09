@@ -110,6 +110,8 @@ public:
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool GetInteractionData(const AActor* Actor, FInteractionData& Data);
 
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
+	bool UpdateInteractionMessage(const AActor* Actor, const FString& NewMessage);
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))

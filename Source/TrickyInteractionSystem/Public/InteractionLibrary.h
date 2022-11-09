@@ -77,4 +77,8 @@ public:
 	static bool GetInteractionData(const AActor* Actor,
 	                               const AActor* InteractiveActor,
 	                               FInteractionData& InteractionData);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	static bool UpdateInteractionMessage(const AActor* Actor, const AActor* InteractiveActor, const FString& NewMessage);
+	
 };

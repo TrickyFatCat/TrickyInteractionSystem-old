@@ -142,7 +142,7 @@ bool UInteractionQueueComponent::QueueHasActor(const AActor* Actor) const
 	{
 		return false;
 	}
-	
+
 	auto Predicate = [&](const FQueueData& Data) { return Data.Actor == Actor; };
 	return InteractionQueue.ContainsByPredicate(Predicate);
 }
@@ -176,6 +176,18 @@ bool UInteractionQueueComponent::GetInteractionData(const AActor* Actor, FIntera
 
 	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
 	Data = InteractionQueue.FindByPredicate(Predicate)->InteractionData;
+	return true;
+}
+
+bool UInteractionQueueComponent::UpdateInteractionMessage(const AActor* Actor, const FString& NewMessage)
+{
+	if (!QueueHasActor(Actor))
+	{
+		return false;
+	}
+
+	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
+	InteractionQueue.FindByPredicate(Predicate)->InteractionData.InteractionMessage = NewMessage;
 	return true;
 }
 
