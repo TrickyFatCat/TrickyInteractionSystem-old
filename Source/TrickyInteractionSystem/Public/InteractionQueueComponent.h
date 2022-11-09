@@ -24,7 +24,7 @@ DECLARE_LOG_CATEGORY_CLASS(LogInteractionQueueComponent, Display, Display)
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStartedSignature, AActor*, TargetActor);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractSignature, AActor*, TargetActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionFinishedSignature, AActor*, TargetActor);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStoppedSignature, AActor*, TargetActor);
 
@@ -54,7 +54,7 @@ public:
 	 * Called when the interaction effect successfully activated.
 	 */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
-	FOnInteractSignature OnInteract;
+	FOnInteractionFinishedSignature OnInteractionFinishedSignature;
 
 	/**
 	 * Called when the interaction process stopped.
@@ -80,6 +80,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool StartInteraction();
 
+	UFUNCTION()
+	bool FinishInteraction(AActor* Actor);
+	
 	/**
 	 * Stops interaction.
 	 */
@@ -114,13 +117,13 @@ public:
 	bool UpdateInteractionMessage(const AActor* Actor, const FString& NewMessage);
 	
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
+	bool bManualInteractionFinish = false;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	TArray<FQueueData> InteractionQueue;
 
 	void SortByWeight();
-
-	UFUNCTION()
-	bool Interact(const FQueueData& QueueData) const;
 
 	void LogWarning(const FString& Message) const;
 
@@ -177,7 +180,7 @@ private:
 	bool StartInteractionTimer(const FQueueData& QueueData);
 
 	UFUNCTION()
-	void InteractWrapper(const FQueueData& QueueData) const;
+	void FinishInteractionWrapper(AActor* Actor);
 
 	bool IsInteractionTimerActive() const;
 };

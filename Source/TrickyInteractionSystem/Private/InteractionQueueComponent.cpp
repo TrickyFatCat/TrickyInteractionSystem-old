@@ -93,7 +93,35 @@ bool UInteractionQueueComponent::StartInteraction()
 	OnInteractionStarted.Broadcast(Actor);
 	IInteractionInterface::Execute_StartInteraction(Actor, GetOwner());
 
-	return Interact(InteractionQueue[0]);
+	return bManualInteractionFinish ? true : FinishInteraction(GetFirstActor());
+}
+
+bool UInteractionQueueComponent::FinishInteraction(AActor* Actor)
+{
+	bool bResult = false;
+
+	if (!QueueHasActor(Actor))
+	{
+		return bResult;
+	}
+
+	FInteractionData InteractionData;
+	GetInteractionData(Actor, InteractionData);
+
+	if (InteractionData.bRequireLineOfSight && Actor != ActorInSight)
+	{
+		return bResult;
+	}
+
+	bResult = IInteractionInterface::Execute_FinishInteraction(Actor, GetOwner());
+
+	if (bResult)
+	{
+		OnInteractionFinishedSignature.Broadcast(Actor);
+		return bResult;
+	}
+
+	return bResult;
 }
 
 bool UInteractionQueueComponent::StopInteraction()
@@ -201,35 +229,10 @@ void UInteractionQueueComponent::SortByWeight()
 	auto PredicateWeight = [&](const FQueueData& Data_A, const FQueueData& Data_B)
 	{
 		return Data_A.InteractionData.SortWeight >= Data_B.InteractionData.SortWeight &&
-			   Data_A.InteractionData.bRequireLineOfSight <= Data_B.InteractionData.bRequireLineOfSight;
+				Data_A.InteractionData.bRequireLineOfSight <= Data_B.InteractionData.bRequireLineOfSight;
 	};
 
 	InteractionQueue.Sort(PredicateWeight);
-}
-
-bool UInteractionQueueComponent::Interact(const FQueueData& QueueData) const
-{
-	if (!IsValid(QueueData.Actor))
-	{
-		return false;
-	}
-
-	const FInteractionData InteractionData = QueueData.InteractionData;
-
-	if (InteractionData.bRequireLineOfSight && QueueData.Actor != ActorInSight)
-	{
-		return false;
-	}
-
-	const bool bResult = IInteractionInterface::Execute_Interact(QueueData.Actor, GetOwner());
-
-	if (bResult)
-	{
-		OnInteract.Broadcast(QueueData.Actor);
-		return true;
-	}
-
-	return false;
 }
 
 void UInteractionQueueComponent::LogWarning(const FString& Message) const
@@ -345,7 +348,7 @@ bool UInteractionQueueComponent::StartInteractionTimer(const FQueueData& QueueDa
 	const FInteractionData InteractionData = QueueData.InteractionData;
 
 	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindUFunction(this, "InteractWrapper", InteractionData);
+	TimerDelegate.BindUFunction(this, "FinishInteractionWrapper", QueueData.Actor);
 	TimerManager.SetTimer(InteractionTimer, TimerDelegate, InteractionData.InteractionTime, false);
 
 	OnInteractionStarted.Broadcast(QueueData.Actor);
@@ -354,9 +357,9 @@ bool UInteractionQueueComponent::StartInteractionTimer(const FQueueData& QueueDa
 	return true;
 }
 
-void UInteractionQueueComponent::InteractWrapper(const FQueueData& QueueData) const
+void UInteractionQueueComponent::FinishInteractionWrapper(AActor* Actor)
 {
-	Interact(QueueData);
+	FinishInteraction(Actor);
 }
 
 bool UInteractionQueueComponent::IsInteractionTimerActive() const

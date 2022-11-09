@@ -31,7 +31,7 @@ public:
 	 * This function called to activate the interaction effect returns true if success, else false.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interaction")
-	bool Interact(AActor* OtherActor);
+	bool FinishInteraction(AActor* OtherActor);
 
 	/**
 	 * This function called when the StopInteraction called from the interaction queue component.
