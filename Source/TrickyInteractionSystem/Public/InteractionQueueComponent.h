@@ -116,6 +116,9 @@ public:
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool UpdateInteractionMessage(const AActor* Actor, const FString& NewMessage);
 	
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
+	bool UpdateInteractionTime(const AActor* Actor, float NewTime);
+	
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	bool bManualInteractionFinish = false;
@@ -126,6 +129,8 @@ private:
 	void SortByWeight();
 
 	void LogWarning(const FString& Message) const;
+
+	FInteractionData& FindInteractionData(const AActor* Actor);
 
 // Line of sight logic
 	

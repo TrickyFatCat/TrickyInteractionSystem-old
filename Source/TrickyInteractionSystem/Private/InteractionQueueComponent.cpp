@@ -202,8 +202,7 @@ bool UInteractionQueueComponent::GetInteractionData(const AActor* Actor, FIntera
 		return false;
 	}
 
-	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
-	Data = InteractionQueue.FindByPredicate(Predicate)->InteractionData;
+	Data = FindInteractionData(Actor);
 	return true;
 }
 
@@ -214,8 +213,18 @@ bool UInteractionQueueComponent::UpdateInteractionMessage(const AActor* Actor, c
 		return false;
 	}
 
-	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
-	InteractionQueue.FindByPredicate(Predicate)->InteractionData.InteractionMessage = NewMessage;
+	FindInteractionData(Actor).InteractionMessage = NewMessage;
+	return true;
+}
+
+bool UInteractionQueueComponent::UpdateInteractionTime(const AActor* Actor, const float NewTime)
+{
+	if (!QueueHasActor(Actor))
+	{
+		return false;
+	}
+
+	FindInteractionData(Actor).InteractionTime = NewTime < 0.f ? 1.f : NewTime;
 	return true;
 }
 
@@ -244,6 +253,12 @@ void UInteractionQueueComponent::LogWarning(const FString& Message) const
 
 	const FString ErrorMessage{FString::Printf(TEXT("%s | Actor: %s"), *Message, *GetOwner()->GetName())};
 	UE_LOG(LogInteractionQueueComponent, Warning, TEXT("%s"), *ErrorMessage);
+}
+
+FInteractionData& UInteractionQueueComponent::FindInteractionData(const AActor* Actor)
+{
+	auto Predicate = [&](const FQueueData& QueueData) { return QueueData.Actor == Actor; };
+	return InteractionQueue.FindByPredicate(Predicate)->InteractionData;
 }
 
 bool UInteractionQueueComponent::GetUseLineOfSight() const
