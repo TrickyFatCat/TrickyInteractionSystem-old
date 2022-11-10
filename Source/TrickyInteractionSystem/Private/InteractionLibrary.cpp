@@ -5,6 +5,7 @@
 
 #include "InteractionInterface.h"
 #include "InteractionQueueComponent.h"
+#include "Components/ShapeComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
 
@@ -54,7 +55,7 @@ bool UInteractionLibrary::AddToInteractionQueue(const AActor* Actor,
 
 bool UInteractionLibrary::RemoveFromInteractionQueue(const AActor* Actor, const AActor* InteractiveActor)
 {
-	if (!IsActorInInteractionQueue(Actor, InteractiveActor))
+	if (!InteractionQueueHasActor(Actor, InteractiveActor))
 	{
 		return false;
 	}
@@ -79,7 +80,7 @@ bool UInteractionLibrary::HasInteractionInterface(const AActor* Actor)
 	return Actor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass());
 }
 
-bool UInteractionLibrary::IsActorInInteractionQueue(const AActor* Actor, const AActor* InteractiveActor)
+bool UInteractionLibrary::InteractionQueueHasActor(const AActor* Actor, const AActor* InteractiveActor)
 {
 	if (!IsValid(Actor))
 	{
@@ -101,7 +102,7 @@ bool UInteractionLibrary::GetInteractionData(const AActor* Actor,
                                              const AActor* InteractiveActor,
                                              FInteractionData& InteractionData)
 {
-	if (!IsActorInInteractionQueue(Actor, InteractiveActor))
+	if (!InteractionQueueHasActor(Actor, InteractiveActor))
 	{
 		return false;
 	}
@@ -120,7 +121,7 @@ bool UInteractionLibrary::UpdateInteractionMessage(const AActor* Actor,
                                                    const AActor* InteractiveActor,
                                                    const FString& NewMessage)
 {
-	if (!IsActorInInteractionQueue(Actor, InteractiveActor))
+	if (!InteractionQueueHasActor(Actor, InteractiveActor))
 	{
 		return false;
 	}
@@ -134,4 +135,17 @@ bool UInteractionLibrary::UpdateInteractionMessage(const AActor* Actor,
 
 	InteractionQueueComponent->UpdateInteractionMessage(InteractiveActor, NewMessage);
 	return true;
+}
+
+void UInteractionLibrary::SetTriggerDefaultCollision(UShapeComponent* ShapeComponent)
+{
+	if (!ShapeComponent)
+	{
+		return;
+	}
+
+	ShapeComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	ShapeComponent->SetCollisionObjectType(ECC_WorldDynamic);
+	ShapeComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	ShapeComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }

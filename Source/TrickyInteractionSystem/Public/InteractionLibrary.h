@@ -71,7 +71,7 @@ public:
 	static bool HasInteractionInterface(const AActor* Actor);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
-	static bool IsActorInInteractionQueue(const AActor* Actor, const AActor* InteractiveActor);
+	static bool InteractionQueueHasActor(const AActor* Actor, const AActor* InteractiveActor);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool GetInteractionData(const AActor* Actor,
@@ -80,5 +80,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool UpdateInteractionMessage(const AActor* Actor, const AActor* InteractiveActor, const FString& NewMessage);
-	
+
+	static void SetTriggerDefaultCollision(UShapeComponent* ShapeComponent);
 };
