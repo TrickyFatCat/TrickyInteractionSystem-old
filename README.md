@@ -57,10 +57,12 @@ This component handles creating a queue for interaction which it sorts by weight
 5. `StopInteraction` - stops interaction;
 6. `IsQueueEmpty` - checks if the interaction queue is empty;
 7. `QueueHasActor` - checks if the interaction queue has interaction data with the given actor;
-8. `GetFirstDataInQueue` - returns the first interaction data in queue;
-9. `GetInteractionData` - returns the interaction data of the given actor;
-10. `UpdateInteractionMessage` - updates interaction message of the given actor in the interaction queue;
-11. `UpdateInteractionTime` - updates interaction time of the given actor in the queue; 
+8. `GetFirstInteractionData` - returns the first interaction data in the interaction queue;
+9. `GetFirstActor` - returns the first actor in the queue;
+10. `GetFirstDataInQueue` - returns the first interaction data in queue;
+11. `GetInteractionData` - returns the interaction data of the given actor;
+12. `UpdateInteractionMessage` - updates interaction message of the given actor in the interaction queue;
+13. `UpdateInteractionTime` - updates interaction time of the given actor in the queue; 
 
 #### Delegates
 
