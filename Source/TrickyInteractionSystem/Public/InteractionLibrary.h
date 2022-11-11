@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InteractionQueueComponent.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "InteractionLibrary.generated.h"
 
@@ -51,6 +52,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool GetPlayerViewpoint(const AActor* Actor, FVector& ViewLocation, FRotator& ViewRotation);
 
+	/** Returns Interaction Queue Component if the given actor has one. */
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
+	static UInteractionQueueComponent* GetInteractionQueueComponent(const AActor* Actor);
+	
+	/** Checks if the interaction queue is empty. */
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	static bool IsInteractionQueueEmpty(const AActor* Actor);
+
 	/** Adds actor to the interaction queue */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool AddToInteractionQueue(const AActor* Actor,
@@ -69,16 +78,26 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool InteractionQueueHasActor(const AActor* Actor, const AActor* InteractiveActor);
 
-	/** Returns interaction data. */
+	/** Returns interaction data of the given interactive actor. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool GetInteractionData(const AActor* Actor,
 	                               const AActor* InteractiveActor,
 	                               FInteractionData& InteractionData);
 
+	/** Returns first queue data. */
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	static bool GetFirstQueueData(const AActor* Actor, FQueueData& QueueData);
+
 	/** Updates interaction message of the given actor in the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
-	static bool UpdateInteractionMessage(const AActor* Actor, const AActor* InteractiveActor, const FString& NewMessage);
+	static bool UpdateInteractionMessage(const AActor* Actor,
+	                                     const AActor* InteractiveActor,
+	                                     const FString& NewMessage);
 
+	/** Updates interaction time of the give actor in the interaction queue. */
+	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
+	static bool UpdateInteractionTime(const AActor* Actor, const AActor* InteractiveActor, const float NewTime);
+	
 	/** Sets default collision for shape components which work as triggers. */
 	static void SetTriggerDefaultCollision(UShapeComponent* ShapeComponent);
 };

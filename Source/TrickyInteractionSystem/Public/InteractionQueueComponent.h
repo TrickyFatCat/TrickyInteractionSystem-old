@@ -94,7 +94,7 @@ public:
 
 	/** Returns the firs actor and its interaction data.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
-	AActor* GetFirstPair(FInteractionData& InteractionData);
+	bool GetFirstQueueData(FQueueData& QueueData);
 
 	/** Returns interaction data of the given actor.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")

@@ -195,10 +195,15 @@ AActor* UInteractionQueueComponent::GetFirstActor()
 	return InteractionQueue[0].Actor;
 }
 
-AActor* UInteractionQueueComponent::GetFirstPair(FInteractionData& InteractionData)
+bool UInteractionQueueComponent::GetFirstQueueData(FQueueData& QueueData)
 {
-	GetFirstData(InteractionData);
-	return GetFirstActor();
+	if (IsQueueEmpty())
+	{
+		return false;
+	}
+
+	QueueData = InteractionQueue[0];
+	return true;
 }
 
 bool UInteractionQueueComponent::GetInteractionData(const AActor* Actor, FInteractionData& Data)
@@ -230,7 +235,7 @@ bool UInteractionQueueComponent::UpdateInteractionTime(const AActor* Actor, cons
 		return false;
 	}
 
-	FindInteractionData(Actor).InteractionTime = NewTime < 0.f ? 1.f : NewTime;
+	FindInteractionData(Actor).InteractionTime = NewTime < 0.f ? 0.f : NewTime;
 	return true;
 }
 
