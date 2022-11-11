@@ -65,7 +65,7 @@ bool UInteractionQueueComponent::StartInteraction()
 	}
 
 	FInteractionData InteractionData;
-	GetFirstData(InteractionData);
+	GetFirstInteractionData(InteractionData);
 	AActor* Actor = GetFirstActor();
 
 	if (!IsValid(Actor))
@@ -132,7 +132,7 @@ bool UInteractionQueueComponent::StopInteraction()
 	}
 
 	FInteractionData InteractionData;
-	GetFirstData(InteractionData);
+	GetFirstInteractionData(InteractionData);
 	AActor* Actor = GetFirstActor();
 
 	if (!IsValid(Actor))
@@ -175,7 +175,7 @@ bool UInteractionQueueComponent::QueueHasActor(const AActor* Actor) const
 	return InteractionQueue.ContainsByPredicate(Predicate);
 }
 
-void UInteractionQueueComponent::GetFirstData(FInteractionData& Data)
+void UInteractionQueueComponent::GetFirstInteractionData(FInteractionData& Data)
 {
 	if (IsQueueEmpty())
 	{
@@ -327,7 +327,7 @@ void UInteractionQueueComponent::SortByLineOfSight(const AActor* Actor)
 
 	if (!IsValid(Actor) || !QueueHasActor(Actor))
 	{
-		GetFirstData(InteractionData);
+		GetFirstInteractionData(InteractionData);
 
 		if (InteractionData.bRequireLineOfSight)
 		{

@@ -68,7 +68,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool StartInteraction();
 
-	/** Finishes interaction. Call it if FinishManually == false. */
+	/** Finishes interaction.
+	 * Call it if FinishManually == false.
+	 */
 	UFUNCTION()
 	bool FinishInteraction(AActor* Actor);
 	
@@ -86,7 +88,7 @@ public:
 
 	/** Returns the first interaction data in queue.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
-	void GetFirstData(FInteractionData& Data);
+	void GetFirstInteractionData(FInteractionData& Data);
 
 	/** Returns the first actor in the queue.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
