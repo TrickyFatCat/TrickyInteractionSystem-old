@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 4,
-	"VersionName": "1.1",
+	"Version": 5,
+	"VersionName": "1.2",
 	"FriendlyName": "TrickyInteractionSystem",
 	"Description": "A small plugin for implementation of a flexible interaction system.",
 	"Category": "TrickyPrototyping",
