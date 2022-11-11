@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "InteractionLibrary.generated.h"
 
+class UShapeComponent;
 
 USTRUCT(BlueprintType)
 struct FInteractionData

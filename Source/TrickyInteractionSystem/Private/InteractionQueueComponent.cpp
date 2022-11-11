@@ -6,6 +6,7 @@
 #include "InteractionLibrary.h"
 #include "InteractionInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/ShapeComponent.h"
 #include "TimerManager.h"
 
 UInteractionQueueComponent::UInteractionQueueComponent()
