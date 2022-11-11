@@ -47,39 +47,38 @@ class TRICKYINTERACTIONSYSTEM_API UInteractionLibrary : public UBlueprintFunctio
 	GENERATED_BODY()
 
 public:
-	/**
-	 * Returns player's viewport location and rotation.
-	 */
+	/** Returns player's viewport location and rotation. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool GetPlayerViewpoint(const AActor* Actor, FVector& ViewLocation, FRotator& ViewRotation);
 
+	/** Adds actor to the interaction queue */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool AddToInteractionQueue(const AActor* Actor,
 	                                  AActor* InteractiveActor,
 	                                  const FInteractionData& InteractionData);
 
-	/**
-	 * Removes interaction data to the interaction queue component of the given actor if it was found.
-	 */
+	/** Removes interaction data to the interaction queue component of the given actor if it was found. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool RemoveFromInteractionQueue(const AActor* Actor, const AActor* InteractiveActor);
 
-	/**
-	 * Checks if the given actor has InteractionInterface.
-	 */
+	/** Checks if the given actor has InteractionInterface.*/
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool HasInteractionInterface(const AActor* Actor);
 
+	/** Check if the actor is in the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool InteractionQueueHasActor(const AActor* Actor, const AActor* InteractiveActor);
 
+	/** Returns interaction data. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool GetInteractionData(const AActor* Actor,
 	                               const AActor* InteractiveActor,
 	                               FInteractionData& InteractionData);
 
+	/** Updates interaction message of the given actor in the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool UpdateInteractionMessage(const AActor* Actor, const AActor* InteractiveActor, const FString& NewMessage);
 
+	/** Sets default collision for shape components which work as triggers. */
 	static void SetTriggerDefaultCollision(UShapeComponent* ShapeComponent);
 };

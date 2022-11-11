@@ -93,7 +93,7 @@ bool UInteractionQueueComponent::StartInteraction()
 	OnInteractionStarted.Broadcast(Actor);
 	IInteractionInterface::Execute_StartInteraction(Actor, GetOwner());
 
-	return bManualInteractionFinish ? true : FinishInteraction(GetFirstActor());
+	return bFinishManually ? true : FinishInteraction(GetFirstActor());
 }
 
 bool UInteractionQueueComponent::FinishInteraction(AActor* Actor)
@@ -193,6 +193,12 @@ AActor* UInteractionQueueComponent::GetFirstActor()
 	}
 
 	return InteractionQueue[0].Actor;
+}
+
+AActor* UInteractionQueueComponent::GetFirstPair(FInteractionData& InteractionData)
+{
+	GetFirstData(InteractionData);
+	return GetFirstActor();
 }
 
 bool UInteractionQueueComponent::GetInteractionData(const AActor* Actor, FInteractionData& Data)

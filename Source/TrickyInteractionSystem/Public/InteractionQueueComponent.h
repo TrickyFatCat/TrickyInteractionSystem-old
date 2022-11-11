@@ -13,10 +13,10 @@ struct FQueueData
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QueueData")
 	AActor* Actor = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QueueData")
 	FInteractionData InteractionData;
 };
 
@@ -44,84 +44,74 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	/**
-	 * Called when the interaction process started.
-	 */
+	/** Called when the interaction process started. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractionStartedSignature OnInteractionStarted;
 
-	/**
-	 * Called when the interaction effect successfully activated.
-	 */
+	/** Called when the interaction effect successfully activated. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractionFinishedSignature OnInteractionFinishedSignature;
 
-	/**
-	 * Called when the interaction process stopped.
-	 */
+	/** Called when the interaction process stopped. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractionStoppedSignature OnInteractionStopped;
 
-	/**
-	 * Adds interaction data into the interaction queue.
-	 */
+	/** Adds interaction data into the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool Add(AActor* Actor, const FInteractionData& InteractionData);
 
-	/**
-	 * Removes interaction data into the interaction queue.
-	 */
+	/** Removes interaction data into the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool Remove(const AActor* Actor);
 
-	/**
-	 * Starts interaction with the first actor in the interaction queue.
-	 */
+	/** Starts interaction with the first actor in the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool StartInteraction();
 
+	/** Finishes interaction. Call it if FinishManually == false. */
 	UFUNCTION()
 	bool FinishInteraction(AActor* Actor);
 	
-	/**
-	 * Stops interaction.
-	 */
+	/** Stops interaction.*/
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool StopInteraction();
 
-	/**
-	 * Checks if the interaction queue is empty.
-	 */
+	/** Checks if the interaction queue is empty.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool IsQueueEmpty() const;
 
-	/**
-	 * Checks if the interaction queue has interaction data with the given actor.
-	 */
+	/** Checks if the interaction queue has interaction data with the given actor.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool QueueHasActor(const AActor* Actor) const;
 
-	/**
-	 * Returns the first interaction data in queue.
-	 */
+	/** Returns the first interaction data in queue.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	void GetFirstData(FInteractionData& Data);
 
+	/** Returns the first actor in the queue.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	AActor* GetFirstActor();
-	
+
+	/** Returns the firs actor and its interaction data.*/
+	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
+	AActor* GetFirstPair(FInteractionData& InteractionData);
+
+	/** Returns interaction data of the given actor.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool GetInteractionData(const AActor* Actor, FInteractionData& Data);
 
+	/** Updates interaction message of the given actor.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool UpdateInteractionMessage(const AActor* Actor, const FString& NewMessage);
-	
+
+	/** Updates interaction time of the given actor.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool UpdateInteractionTime(const AActor* Actor, float NewTime);
 	
 private:
+	/** If true, the FinishInteraction() must be called manually.*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
-	bool bManualInteractionFinish = false;
+	bool bFinishManually = false;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	TArray<FQueueData> InteractionQueue;
@@ -140,36 +130,28 @@ public:
 
 	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetUseLineOfSight(const bool Value);
+	
 private:
 	/**
 	 * Toggles the line of sight checks.
-	 *
 	 * Keep it false if there's no interactive actors require line of sight to interact with.
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetUseLineOfSight, BlueprintSetter=SetUseLineOfSight, Category="Interaction", meta=(AllowPrivateAccess))
 	bool bUseLineOfSight = false;
 
-	/**
-	 * Line of sight trace channel.
-	 */
+	/** Line of sight trace channel. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	TEnumAsByte<ETraceTypeQuery> TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Visibility);
 
-	/**
-	 * The line of sight max distance.
-	 */
+	/** The line of sight max distance.*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	float SightDistance = 512.f;
 
-	/**
-	 * The line of sight radius. 
-	 */
+	/** The line of sight radius. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	float SightRadius = 32.f;
 
-	/**
-	 * The actor caught by line of sight.
-	 */
+	/** The actor caught by line of sight. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	AActor* ActorInSight = nullptr;
 
@@ -178,7 +160,6 @@ private:
 	void SortByLineOfSight(const AActor* Actor);
 
 // Overtime interaction
-private:
 	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	FTimerHandle InteractionTimer;
 
