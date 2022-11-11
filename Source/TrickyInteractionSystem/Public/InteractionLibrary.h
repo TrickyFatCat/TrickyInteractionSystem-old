@@ -3,16 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InteractionQueueComponent.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "InteractionLibrary.generated.h"
 
-class UInteractionQueueComponent;
 
 USTRUCT(BlueprintType)
 struct FInteractionData
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	/**
 	 * Toggles if the actor require being in the line of sight to be interacted. 
@@ -38,6 +36,20 @@ struct FInteractionData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractionData", meta=(ClampMin="0"))
 	float InteractionTime = 0.f;
 };
+
+USTRUCT(BlueprintType)
+struct FQueueData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QueueData")
+	AActor* Actor = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QueueData")
+	FInteractionData InteractionData;
+};
+
+class UInteractionQueueComponent;
 
 /**
  * A library which contains some useful functions for custom implementation of the system using Blueprints.

@@ -8,18 +8,6 @@
 #include "Engine/EngineTypes.h"
 #include "InteractionQueueComponent.generated.h"
 
-USTRUCT(BlueprintType)
-struct FQueueData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QueueData")
-	AActor* Actor = nullptr;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="QueueData")
-	FInteractionData InteractionData;
-};
-
 DECLARE_LOG_CATEGORY_CLASS(LogInteractionQueueComponent, Display, Display)
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStartedSignature, AActor*, TargetActor);
