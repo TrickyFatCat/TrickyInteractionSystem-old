@@ -55,6 +55,11 @@ class UInteractionQueueComponent;
 /**
  * A library which contains some useful functions for custom implementation of the system using Blueprints.
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActorAddedToQueueSignature, const AActor*, OtherActor);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActorRemovedFromQueueSignature, const AActor*, OtherActor);
+
 UCLASS()
 class TRICKYINTERACTIONSYSTEM_API UInteractionLibrary : public UBlueprintFunctionLibrary
 {
@@ -68,7 +73,7 @@ public:
 	/** Returns Interaction Queue Component if the given actor has one. */
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	static UInteractionQueueComponent* GetInteractionQueueComponent(const AActor* Actor);
-	
+
 	/** Checks if the interaction queue is empty. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool IsInteractionQueueEmpty(const AActor* Actor);
@@ -110,7 +115,7 @@ public:
 	/** Updates interaction time of the give actor in the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	static bool UpdateInteractionTime(const AActor* Actor, const AActor* InteractiveActor, const float NewTime);
-	
+
 	/** Sets default collision for shape components which work as triggers. */
 	static void SetTriggerDefaultCollision(UShapeComponent* ShapeComponent);
 };
