@@ -10,7 +10,7 @@ The plugin can be used in both C++ and Blueprint projects.
 
 **At the moment, the package is compatible only with Unreal Engine 4.**
 
-1. Download [**package file**](https://github.com/TrickyFatCat/TrickyInteractionSystem/releases/tag/v1.1);
+1. Download the latest [**package file**](https://github.com/TrickyFatCat/TrickyInteractionSystem/releases/);
 2. Unzip the package to the Plugins folder in engine folder, e.g. `C:\Program Files\Epic Games\UE_4.27\Engine\Plugins`;
 3. Restart the project;
 
@@ -30,6 +30,7 @@ The plugin contains:
 1. InteractionQueueComponent;
 2. InteractionInterface;
 3. InteractionLibrary;
+4. Interaction Triggers;
 
 ### InteractionQueueComponent
 
@@ -69,6 +70,8 @@ This component handles creating a queue for interaction which it sorts by weight
 1. `OnInteractionStarted` - called when the interaction process started;
 2. `OnInteract` - called when the interaction effect successfully activated;
 3. `OnInteractionStopped` - called when the interaction process stopped;
+4. `OnActorAdded` - called when a new actor was added to the queue;
+5. `OnActorRemoved` - called when an actor was removed from the queue;
 
 ### Interaction data
 
@@ -108,13 +111,33 @@ A library which contains some useful functions for custom implementation of the 
 9. `GetFirstQueueData` - return the first data in the queue;
 10. `UpdateInteractionMessage` - updates the interaction message of the given interactive actor;
 
+## Interaction Triggers
+
+A small collection of trigger components which add and remove their owning actor from the interaction queue.
+
+1. BoxInteractionComponent;
+2. CapsuleInteractionComponent;
+3. SphereInteractionComponent;
+
+### Parameters
+
+1. `InteractionData` - interaction data which will be added to the interaction queue;
+
+### Functions
+
+1. `SetInteractionMessage` - sets interaction message in the `InteractionData` and updates it in the interaction queue;
+
+### Delegates
+
+1. `OnActorAdded` - called when the owning actor was added to the queue;
+2. `OnActorRemoved` - called when the owning actor was removed from the queue;
+
 ## Quick Setup
 
 1. Add InteractionQueueComponent to your character;
 2. Create an interactive actor:
    * Add InteractionInterface to the chosen actor and write the logic in the `Interact` function;
-   * Add a trigger;
-   * Add the actor to the interaction queue if the actor enters the trigger;
-   * Remove the actor from the interaction queue if the actor exits the trigger;
+   * Add an interaction trigger;
+   * Adjust interaction data in the trigger;
 3. Create "Interaction" input action;
 4. Call the `StartInteraction` function of InteractionQueueComponent;
