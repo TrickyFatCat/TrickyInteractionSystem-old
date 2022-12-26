@@ -44,6 +44,14 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractionStoppedSignature OnInteractionStopped;
 
+	/** Called when actor was added to the queue. */
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnActorAddedToQueueSignature OnActorAdded;
+
+	/** Called when actor was added to the queue. */
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnActorRemovedFromQueueSignature OnActorRemoved;
+
 	/** Adds interaction data into the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool Add(AActor* Actor, const FInteractionData& InteractionData);
@@ -61,7 +69,7 @@ public:
 	 */
 	UFUNCTION()
 	bool FinishInteraction(AActor* Actor);
-	
+
 	/** Stops interaction.*/
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	bool StopInteraction();
@@ -97,12 +105,12 @@ public:
 	/** Updates interaction time of the given actor.*/
 	UFUNCTION(BlueprintPure, Category="TrickyInteractionSystem")
 	bool UpdateInteractionTime(const AActor* Actor, float NewTime);
-	
+
 private:
 	/** If true, the FinishInteraction() must be called manually.*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	bool bFinishManually = false;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	TArray<FQueueData> InteractionQueue;
 
@@ -112,33 +120,37 @@ private:
 
 	FInteractionData& FindInteractionData(const AActor* Actor);
 
-// Line of sight logic
-	
+	// Line of sight logic
+
 public:
 	UFUNCTION(BlueprintGetter, Category="TrickyInteractionSystem")
 	bool GetUseLineOfSight() const;
 
 	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetUseLineOfSight(const bool Value);
-	
+
 private:
 	/**
 	 * Toggles the line of sight checks.
 	 * Keep it false if there's no interactive actors require line of sight to interact with.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetUseLineOfSight, BlueprintSetter=SetUseLineOfSight, Category="Interaction", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetUseLineOfSight, BlueprintSetter=SetUseLineOfSight,
+		Category="Interaction", meta=(AllowPrivateAccess))
 	bool bUseLineOfSight = false;
 
 	/** Line of sight trace channel. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction",
+		meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	TEnumAsByte<ETraceTypeQuery> TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Visibility);
 
 	/** The line of sight max distance.*/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction",
+		meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	float SightDistance = 512.f;
 
 	/** The line of sight radius. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction", meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Interaction",
+		meta=(AllowPrivateAccess, EditCondition="bUseLineOfSight"))
 	float SightRadius = 32.f;
 
 	/** The actor caught by line of sight. */
@@ -149,7 +161,7 @@ private:
 
 	void SortByLineOfSight(const AActor* Actor);
 
-// Overtime interaction
+	// Overtime interaction
 	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess))
 	FTimerHandle InteractionTimer;
 

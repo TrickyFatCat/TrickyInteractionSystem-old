@@ -37,6 +37,7 @@ bool UInteractionQueueComponent::Add(AActor* Actor, const FInteractionData& Inte
 
 	InteractionQueue.Add(FQueueData{Actor, InteractionData});
 	SortByWeight();
+	OnActorAdded.Broadcast(Actor);
 	return true;
 }
 
@@ -53,6 +54,7 @@ bool UInteractionQueueComponent::Remove(const AActor* Actor)
 	if (bItemsRemoved)
 	{
 		SortByWeight();
+		OnActorRemoved.Broadcast(Actor);
 	}
 
 	return bItemsRemoved;
