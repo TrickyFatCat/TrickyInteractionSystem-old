@@ -18,6 +18,14 @@ class TRICKYINTERACTIONSYSTEM_API UCapsuleInteractionComponent : public UCapsule
 public:
 	UCapsuleInteractionComponent();
 
+	/** Called when the owner was added to the interaction queue. */
+	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
+	FOnActorAddedToQueueSignature OnActorAdded;
+
+	/** Called when the owner was removed from the interaction queue. */
+	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
+	FOnActorRemovedFromQueueSignature OnActorRemoved;
+
 	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetInteractionData(const FInteractionData& Value);
 

@@ -18,11 +18,20 @@ class TRICKYINTERACTIONSYSTEM_API UBoxInteractionComponent : public UBoxComponen
 public:
 	UBoxInteractionComponent();
 
-	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
+	/** Called when the owner was added to the interaction queue. */
+	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
+	FOnActorAddedToQueueSignature OnActorAdded;
+
+	/** Called when the owner was removed from the interaction queue. */
+	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
+	FOnActorRemovedFromQueueSignature OnActorRemoved;
+
+	UFUNCTION
+	(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetInteractionData(const FInteractionData& Value);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
-	void SetInteractionMessage(AActor* Actor, const FString& Message);
+	void SetInteractionMessage(const AActor* Actor, const FString& Message);
 
 	UFUNCTION(BlueprintGetter, Category="TrickyInteractionSystem")
 	FInteractionData GetInteractionData() const;

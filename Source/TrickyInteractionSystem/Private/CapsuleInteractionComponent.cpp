@@ -44,9 +44,14 @@ void UCapsuleInteractionComponent::OnBeginOverlap(UPrimitiveComponent* Overlappe
                                                   bool bFromSweep,
                                                   const FHitResult& SweepResult)
 {
-	if (IsValid(OtherActor))
+	if (!IsValid(OtherActor))
 	{
-		UInteractionLibrary::AddToInteractionQueue(OtherActor, GetOwner(), InteractionData);
+		return;
+	}
+
+	if (UInteractionLibrary::AddToInteractionQueue(OtherActor, GetOwner(), InteractionData))
+	{
+		OnActorAdded.Broadcast(OtherActor);
 	}
 }
 
@@ -55,8 +60,13 @@ void UCapsuleInteractionComponent::OnEndOverlap(UPrimitiveComponent* OverlappedC
                                                 UPrimitiveComponent* OtherComp,
                                                 int32 OtherBodyIndex)
 {
-	if (IsValid(OtherActor))
+	if (!IsValid(OtherActor))
 	{
-		UInteractionLibrary::RemoveFromInteractionQueue(OtherActor, GetOwner());
+		return;
+	}
+
+	if (UInteractionLibrary::RemoveFromInteractionQueue(OtherActor, GetOwner()))
+	{
+		OnActorRemoved.Broadcast(OtherActor);
 	}
 }

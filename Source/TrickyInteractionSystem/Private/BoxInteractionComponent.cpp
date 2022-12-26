@@ -18,7 +18,7 @@ void UBoxInteractionComponent::SetInteractionData(const FInteractionData& Value)
 	InteractionData = Value;
 }
 
-void UBoxInteractionComponent::SetInteractionMessage(AActor* Actor, const FString& Message)
+void UBoxInteractionComponent::SetInteractionMessage(const AActor* Actor, const FString& Message)
 {
 	InteractionData.InteractionMessage = Message;
 	UInteractionLibrary::UpdateInteractionMessage(Actor, GetOwner(), Message);
@@ -44,9 +44,14 @@ void UBoxInteractionComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedCom
                                               bool bFromSweep,
                                               const FHitResult& SweepResult)
 {
-	if (IsValid(OtherActor))
+	if (!IsValid(OtherActor))
 	{
-		UInteractionLibrary::AddToInteractionQueue(OtherActor, GetOwner(), InteractionData);
+		return;
+	}
+
+	if (UInteractionLibrary::AddToInteractionQueue(OtherActor, GetOwner(), InteractionData))
+	{
+		OnActorAdded.Broadcast(OtherActor);
 	}
 }
 
@@ -55,8 +60,13 @@ void UBoxInteractionComponent::OnEndOverlap(UPrimitiveComponent* OverlappedCompo
                                             UPrimitiveComponent* OtherComp,
                                             int32 OtherBodyIndex)
 {
-	if (IsValid(OtherActor))
+	if (!IsValid(OtherActor))
 	{
-		UInteractionLibrary::RemoveFromInteractionQueue(OtherActor, GetOwner());
+		return;
+	}
+
+	if (UInteractionLibrary::RemoveFromInteractionQueue(OtherActor, GetOwner()))
+	{
+		OnActorRemoved.Broadcast(OtherActor);
 	}
 }

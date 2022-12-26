@@ -19,13 +19,21 @@ class TRICKYINTERACTIONSYSTEM_API USphereInteractionComponent : public USphereCo
 
 public:
 	USphereInteractionComponent();
-	
+
+	/** Called when the owner was added to the interaction queue. */
+	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
+	FOnActorAddedToQueueSignature OnActorAdded;
+
+	/** Called when the owner was removed from the interaction queue. */
+	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
+	FOnActorRemovedFromQueueSignature OnActorRemoved;
+
 	UFUNCTION(BlueprintSetter, Category="TrickyInteractionSystem")
 	void SetInteractionData(const FInteractionData& Value);
 
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")
 	void SetInteractionMessage(AActor* Actor, const FString& Message);
-	
+
 	UFUNCTION(BlueprintGetter, Category="TrickyInteractionSystem")
 	FInteractionData GetInteractionData() const;
 
@@ -52,5 +60,5 @@ private:
 	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
 	                          AActor* OtherActor,
 	                          UPrimitiveComponent* OtherComp,
-	                          int32 OtherBodyIndex);	
+	                          int32 OtherBodyIndex);
 };
