@@ -30,7 +30,7 @@ void UInteractionQueueComponent::TickComponent(float DeltaTime,
 
 bool UInteractionQueueComponent::Add(AActor* Actor, const FInteractionData& InteractionData)
 {
-	if (!IsValid(Actor) && QueueHasActor(Actor))
+	if (!IsValid(Actor) && QueueHasActor(Actor) && !UInteractionLibrary::HasInteractionInterface(Actor))
 	{
 		return false;
 	}
