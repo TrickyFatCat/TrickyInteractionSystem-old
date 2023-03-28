@@ -10,11 +10,7 @@
 
 DECLARE_LOG_CATEGORY_CLASS(LogInteractionQueueComponent, Display, Display)
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStartedSignature, AActor*, TargetActor);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionFinishedSignature, AActor*, TargetActor);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionStoppedSignature, AActor*, TargetActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionSignature, AActor*, TargetActor);
 
 /**
  *  This component handles creating a queue for interaction which it sorts by weight and line of sight.
@@ -34,23 +30,23 @@ public:
 
 	/** Called when the interaction process started. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
-	FOnInteractionStartedSignature OnInteractionStarted;
+	FOnInteractionSignature OnInteractionStarted;
 
 	/** Called when the interaction effect successfully activated. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
-	FOnInteractionFinishedSignature OnInteractionFinishedSignature;
+	FOnInteractionSignature OnInteractionFinishedSignature;
 
 	/** Called when the interaction process stopped. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
-	FOnInteractionStoppedSignature OnInteractionStopped;
+	FOnInteractionSignature OnInteractionStopped;
 
 	/** Called when actor was added to the queue. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
-	FOnActorAddedToQueueSignature OnActorAdded;
+	FOnQueueChangedSignature OnActorAdded;
 
 	/** Called when actor was added to the queue. */
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
-	FOnActorRemovedFromQueueSignature OnActorRemoved;
+	FOnQueueChangedSignature OnActorRemoved;
 
 	/** Adds interaction data into the interaction queue. */
 	UFUNCTION(BlueprintCallable, Category="TrickyInteractionSystem")

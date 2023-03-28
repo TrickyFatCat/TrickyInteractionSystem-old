@@ -1,4 +1,4 @@
-// MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
+// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 #pragma once
 
@@ -56,9 +56,7 @@ class UInteractionQueueComponent;
  * A library which contains some useful functions for custom implementation of the system using Blueprints.
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActorAddedToQueueSignature, const AActor*, OtherActor);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActorRemovedFromQueueSignature, const AActor*, OtherActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQueueChangedSignature, const AActor*, OtherActor);
 
 UCLASS()
 class TRICKYINTERACTIONSYSTEM_API UInteractionLibrary : public UBlueprintFunctionLibrary

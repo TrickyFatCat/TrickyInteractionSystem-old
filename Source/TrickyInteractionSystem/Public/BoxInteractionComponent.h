@@ -20,11 +20,11 @@ public:
 
 	/** Called when the owner was added to the interaction queue. */
 	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
-	FOnActorAddedToQueueSignature OnActorAdded;
+	FOnQueueChangedSignature OnActorAdded;
 
 	/** Called when the owner was removed from the interaction queue. */
 	UPROPERTY(BlueprintAssignable, Category="TrickyInteractionSystem")
-	FOnActorRemovedFromQueueSignature OnActorRemoved;
+	FOnQueueChangedSignature OnActorRemoved;
 
 	UFUNCTION
 	(BlueprintSetter, Category="TrickyInteractionSystem")

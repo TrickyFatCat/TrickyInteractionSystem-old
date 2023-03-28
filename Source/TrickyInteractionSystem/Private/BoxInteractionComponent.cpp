@@ -34,7 +34,7 @@ void UBoxInteractionComponent::BeginPlay()
 	Super::BeginPlay();
 
 	OnComponentBeginOverlap.AddDynamic(this, &UBoxInteractionComponent::HandleBeginOverlap);
-	OnComponentEndOverlap.AddDynamic(this, &UBoxInteractionComponent::HandleBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UBoxInteractionComponent::HandleEndOverlap);
 }
 
 void UBoxInteractionComponent::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
