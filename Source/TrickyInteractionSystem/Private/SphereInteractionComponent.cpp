@@ -33,11 +33,11 @@ void USphereInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnComponentBeginOverlap.AddDynamic(this, &USphereInteractionComponent::OnBeginOverlap);
-	OnComponentEndOverlap.AddDynamic(this, &USphereInteractionComponent::OnEndOverlap);
+	OnComponentBeginOverlap.AddDynamic(this, &USphereInteractionComponent::HandleBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &USphereInteractionComponent::HandleEndOverlap);
 }
 
-void USphereInteractionComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+void USphereInteractionComponent::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                                  AActor* OtherActor,
                                                  UPrimitiveComponent* OtherComp,
                                                  int32 OtherBodyIndex,
@@ -55,7 +55,7 @@ void USphereInteractionComponent::OnBeginOverlap(UPrimitiveComponent* Overlapped
 	}
 }
 
-void USphereInteractionComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
+void USphereInteractionComponent::HandleEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                                AActor* OtherActor,
                                                UPrimitiveComponent* OtherComp,
                                                int32 OtherBodyIndex)

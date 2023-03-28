@@ -1,4 +1,4 @@
-// MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
+// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 
 #include "BoxInteractionComponent.h"
@@ -33,16 +33,16 @@ void UBoxInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnComponentBeginOverlap.AddDynamic(this, &UBoxInteractionComponent::OnBeginOverlap);
-	OnComponentEndOverlap.AddDynamic(this, &UBoxInteractionComponent::OnEndOverlap);
+	OnComponentBeginOverlap.AddDynamic(this, &UBoxInteractionComponent::HandleBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UBoxInteractionComponent::HandleBeginOverlap);
 }
 
-void UBoxInteractionComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-                                              AActor* OtherActor,
-                                              UPrimitiveComponent* OtherComp,
-                                              int32 OtherBodyIndex,
-                                              bool bFromSweep,
-                                              const FHitResult& SweepResult)
+void UBoxInteractionComponent::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+                                                  AActor* OtherActor,
+                                                  UPrimitiveComponent* OtherComp,
+                                                  int32 OtherBodyIndex,
+                                                  bool bFromSweep,
+                                                  const FHitResult& SweepResult)
 {
 	if (!IsValid(OtherActor))
 	{
@@ -55,10 +55,10 @@ void UBoxInteractionComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedCom
 	}
 }
 
-void UBoxInteractionComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
-                                            AActor* OtherActor,
-                                            UPrimitiveComponent* OtherComp,
-                                            int32 OtherBodyIndex)
+void UBoxInteractionComponent::HandleEndOverlap(UPrimitiveComponent* OverlappedComponent,
+                                                AActor* OtherActor,
+                                                UPrimitiveComponent* OtherComp,
+                                                int32 OtherBodyIndex)
 {
 	if (!IsValid(OtherActor))
 	{

@@ -1,4 +1,4 @@
-// MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
+// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 
 #include "CapsuleInteractionComponent.h"
@@ -33,16 +33,16 @@ void UCapsuleInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnComponentBeginOverlap.AddDynamic(this, &UCapsuleInteractionComponent::OnBeginOverlap);
-	OnComponentEndOverlap.AddDynamic(this, &UCapsuleInteractionComponent::OnEndOverlap);
+	OnComponentBeginOverlap.AddDynamic(this, &UCapsuleInteractionComponent::HandleBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UCapsuleInteractionComponent::HandleEndOverlap);
 }
 
-void UCapsuleInteractionComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-                                                  AActor* OtherActor,
-                                                  UPrimitiveComponent* OtherComp,
-                                                  int32 OtherBodyIndex,
-                                                  bool bFromSweep,
-                                                  const FHitResult& SweepResult)
+void UCapsuleInteractionComponent::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+                                                      AActor* OtherActor,
+                                                      UPrimitiveComponent* OtherComp,
+                                                      int32 OtherBodyIndex,
+                                                      bool bFromSweep,
+                                                      const FHitResult& SweepResult)
 {
 	if (!IsValid(OtherActor))
 	{
@@ -55,10 +55,10 @@ void UCapsuleInteractionComponent::OnBeginOverlap(UPrimitiveComponent* Overlappe
 	}
 }
 
-void UCapsuleInteractionComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
-                                                AActor* OtherActor,
-                                                UPrimitiveComponent* OtherComp,
-                                                int32 OtherBodyIndex)
+void UCapsuleInteractionComponent::HandleEndOverlap(UPrimitiveComponent* OverlappedComponent,
+                                                    AActor* OtherActor,
+                                                    UPrimitiveComponent* OtherComp,
+                                                    int32 OtherBodyIndex)
 {
 	if (!IsValid(OtherActor))
 	{

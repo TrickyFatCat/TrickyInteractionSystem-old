@@ -1,4 +1,4 @@
-// MIT License Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov
+// MIT License Copyright (c) Artyom "Tricky Fat Cat" Volkov
 
 #pragma once
 
@@ -47,16 +47,16 @@ private:
 	FInteractionData InteractionData;
 
 	UFUNCTION()
-	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-	                            AActor* OtherActor,
-	                            UPrimitiveComponent* OtherComp,
-	                            int32 OtherBodyIndex,
-	                            bool bFromSweep,
-	                            const FHitResult& SweepResult);
+	virtual void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+	                                AActor* OtherActor,
+	                                UPrimitiveComponent* OtherComp,
+	                                int32 OtherBodyIndex,
+	                                bool bFromSweep,
+	                                const FHitResult& SweepResult);
 
 	UFUNCTION()
-	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
-	                          AActor* OtherActor,
-	                          UPrimitiveComponent* OtherComp,
-	                          int32 OtherBodyIndex);
+	virtual void HandleEndOverlap(UPrimitiveComponent* OverlappedComponent,
+	                              AActor* OtherActor,
+	                              UPrimitiveComponent* OtherComp,
+	                              int32 OtherBodyIndex);
 };
