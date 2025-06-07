@@ -1,5 +1,7 @@
 # TrickyInteractionSystem
 
+This projects isn't in development no more. You can find a new version [**here**](https://github.com/TrickyFatCat/TrickyInteractionSystem)
+
 An Unreal Engine plugin contains components for integration of the simple interaction system in a prototype.
 
 ## Installation
